@@ -1,4 +1,4 @@
-export const data = {
+const data = {
   'Meta Data': {
     '1. Information':
       'Intraday (1min) open, high, low, close prices and volume',
@@ -8194,3 +8194,5 @@ export const data = {
     }
   }
 }
+
+export default data
