@@ -24,7 +24,7 @@ import {
 import { format } from 'd3-format'
 import { timeFormat } from 'd3-time-format'
 
-import { OHLCTooltip } from 'react-stockcharts/lib/tooltip'
+import { OHLCTooltip, SingleValueTooltip } from 'react-stockcharts/lib/tooltip'
 
 const candlesAppearance = {
   wickStroke: '#000000',
@@ -50,7 +50,7 @@ class CandleStickStockScaleChart extends React.Component {
     const xExtents = [xAccessor(last(data)), xAccessor(data[data.length - 400])]
 
     const height = 800
-    const margin = { left: 50, right: 50, top: 10, bottom: 30 }
+    const margin = { left: 10, right: 50, top: 50, bottom: 20 }
     const gridHeight = height - margin.top - margin.bottom
     const gridWidth = width - margin.left - margin.right
 
@@ -73,8 +73,9 @@ class CandleStickStockScaleChart extends React.Component {
         ratio={ratio}
         width={width}
         margin={margin}
+        padding={{ left: 10, right: 10 }}
         type={type}
-        seriesName=""
+        seriesName="WTW"
         data={data}
         xScale={xScale}
         xAccessor={xAccessor}
@@ -82,7 +83,12 @@ class CandleStickStockScaleChart extends React.Component {
         xExtents={xExtents}
         zoomAnchor={rightDomainBasedZoomAnchor}
       >
-        <Chart id={1} height={600} yExtents={d => [d.high, d.low]}>
+        <Chart
+          id={1}
+          height={550}
+          yExtents={d => [d.high, d.low]}
+          padding={{ top: 20, bottom: 10 }}
+        >
           <XAxis axisAt="bottom" orient="bottom" showTicks={false} {...xGrid} />
           <YAxis axisAt="right" orient="right" ticks={5} {...yGrid} />
           <MouseCoordinateY
@@ -99,7 +105,7 @@ class CandleStickStockScaleChart extends React.Component {
           id={2}
           height={150}
           yExtents={d => d.volume}
-          origin={(w, h) => [0, h - 150]}
+          origin={(w, h) => [0, h - 170]}
         >
           <XAxis axisAt="bottom" orient="bottom" ticks={15} {...xGrid} />
           <YAxis
