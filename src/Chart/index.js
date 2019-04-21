@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
+import classNames from 'classnames/bind'
 import Chart from './Chart'
 import { getData } from './utils'
 import s from './Chart.m.scss'
+
+const cx = classNames.bind(s)
 
 class ChartComponent extends React.Component {
   componentDidMount() {
@@ -14,10 +17,8 @@ class ChartComponent extends React.Component {
       return <div>Loading...</div>
     }
 
-    console.log(s)
-
     // return <Chart data={this.state.data} />
-    return <div className={s.container}>hello</div>
+    return <div className={cx('container', { red: true })}>hello</div>
   }
 }
 
