@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Chart from './Chart'
 import { getData } from './utils'
+import s from './Chart.m.scss'
 
 class ChartComponent extends React.Component {
   componentDidMount() {
@@ -13,7 +14,10 @@ class ChartComponent extends React.Component {
       return <div>Loading...</div>
     }
 
-    return <Chart data={this.state.data} />
+    console.log(s)
+
+    // return <Chart data={this.state.data} />
+    return <div className={s.container}>hello</div>
   }
 }
 

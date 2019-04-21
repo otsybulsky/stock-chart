@@ -1,3 +1,11 @@
 .container {
+  height: 50vh;
+  width: 50%;
+  margin: 2rem;
+  padding: 1rem;
   border: 1px solid blue;
+
+  &.red {
+    color: red;
+  }
 }
