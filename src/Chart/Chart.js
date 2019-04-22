@@ -38,19 +38,48 @@ const candlesAppearance = {
 }
 
 class CandleStickStockScaleChart extends React.Component {
+  componentDidMount() {
+    this.node.subscribe('myUniqueId', { listener: this.handleEvents })
+  }
+
+  componentWillUnmount() {
+    console.log('--unmount')
+    this.node.unsubscribe('myUniqueId')
+  }
+
+  handleEvents = (type, moreProps, state) => {
+    const mouseTypes = {
+      mouseEnter: 'mouseenter',
+      mouseLeave: 'mouseleave'
+    }
+    const types = ['zoom', 'pan', 'paned']
+
+    if (type === mouseTypes.mouseEnter) {
+      this.setState({ chartActive: true })
+    }
+
+    if (type === mouseTypes.mouseLeave) {
+      this.setState({ chartActive: false })
+    }
+
+    if (this.state.chartActive && types.includes(type)) {
+      const { updateConfig } = this.props
+      const { xScale } = moreProps
+
+      updateConfig({ xExtents: xScale.domain() })
+    }
+  }
+
   render() {
-    const { type, data: initialData, width, ratio } = this.props
+    const {
+      config: { data, xScale, xAccessor, displayXAccessor, xExtents }
+    } = this.props
+    if (!data) {
+      return null
+    }
+    const { type, height, width, ratio } = this.props
 
-    const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
-      d => d.date
-    )
-    const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
-      initialData
-    )
-    const xExtents = [xAccessor(last(data)), xAccessor(data[data.length - 400])]
-
-    const height = 800
-    const margin = { left: 10, right: 50, top: 50, bottom: 20 }
+    const margin = { left: 10, right: 50, top: 10, bottom: 10 }
     const gridHeight = height - margin.top - margin.bottom
     const gridWidth = width - margin.left - margin.right
 
@@ -69,6 +98,9 @@ class CandleStickStockScaleChart extends React.Component {
 
     return (
       <ChartCanvas
+        ref={node => {
+          this.node = node
+        }}
         height={height}
         ratio={ratio}
         width={width}
@@ -85,7 +117,7 @@ class CandleStickStockScaleChart extends React.Component {
       >
         <Chart
           id={1}
-          height={550}
+          height={height * 0.75}
           yExtents={d => [d.high, d.low]}
           padding={{ top: 20, bottom: 10 }}
         >
@@ -103,9 +135,9 @@ class CandleStickStockScaleChart extends React.Component {
 
         <Chart
           id={2}
-          height={150}
+          height={height * 0.2}
           yExtents={d => d.volume}
-          origin={(w, h) => [0, h - 170]}
+          origin={(w, h) => [0, h * 0.78]}
         >
           <XAxis axisAt="bottom" orient="bottom" ticks={15} {...xGrid} />
           <YAxis
