@@ -43,11 +43,15 @@ class CandleStickStockScaleChart extends React.Component {
   }
 
   componentWillUnmount() {
-    console.log('--unmount')
     this.node.unsubscribe('myUniqueId')
   }
 
   handleEvents = (type, moreProps, state) => {
+    const {
+      updateConfig,
+      config: { chartActive }
+    } = this.props
+
     const mouseTypes = {
       mouseEnter: 'mouseenter',
       mouseLeave: 'mouseleave'
@@ -55,24 +59,29 @@ class CandleStickStockScaleChart extends React.Component {
     const types = ['zoom', 'pan', 'paned']
 
     if (type === mouseTypes.mouseEnter) {
-      this.setState({ chartActive: true })
+      updateConfig({ chartActive: true })
     }
 
     if (type === mouseTypes.mouseLeave) {
-      this.setState({ chartActive: false })
+      updateConfig({ chartActive: false })
     }
 
-    if (this.state.chartActive && types.includes(type)) {
-      const { updateConfig } = this.props
+    if (chartActive && types.includes(type)) {
       const { xScale } = moreProps
-
       updateConfig({ xExtents: xScale.domain() })
     }
   }
 
   render() {
     const {
-      config: { data, xScale, xAccessor, displayXAccessor, xExtents }
+      config: {
+        data,
+        xScale,
+        xAccessor,
+        displayXAccessor,
+        xExtents,
+        chartActive
+      }
     } = this.props
     if (!data) {
       return null

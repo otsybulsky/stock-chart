@@ -10,15 +10,13 @@ import { last } from 'react-stockcharts/lib/utils'
 const cx = classNames.bind(s)
 
 const ChartComponent = () => {
-  const [config, setConfig] = useState(null)
+  const [config, setConfig] = useState({})
 
   const [ref, { width, height }] = useDimensions()
 
   useEffect(() => {
     const fetchData = async () => {
       const initialData = await getData()
-      console.log('=========fetching data')
-
       const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
         d => d.date
       )
@@ -27,16 +25,42 @@ const ChartComponent = () => {
       )
       const xExtents = [
         xAccessor(last(data)),
-        xAccessor(data[data.length - 200])
+        xAccessor(data[data.length - 400])
       ]
       setConfig({ data, xScale, xAccessor, displayXAccessor, xExtents })
     }
     fetchData()
   }, [])
 
-  const updateConfig = params => setConfig({ ...config, ...params })
+  useEffect(() => {
+    if (config.chartActive) {
+      document.addEventListener('keydown', handleKeyDown)
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown)
+      }
+    } else {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [config])
 
-  if (!config) {
+  const handleKeyDown = e => {
+    if (e.keyCode == 37) {
+      //step left
+      const [first, last] = config.xExtents
+      updateConfig({ xExtents: [first - 1, last - 1] })
+    }
+    if (e.keyCode == 39) {
+      //step right
+      const [first, last] = config.xExtents
+      updateConfig({ xExtents: [first + 1, last + 1] })
+    }
+  }
+
+  const updateConfig = params => {
+    setConfig({ ...config, ...params })
+  }
+
+  if (!config.data) {
     return <div>Loading...</div>
   }
 
