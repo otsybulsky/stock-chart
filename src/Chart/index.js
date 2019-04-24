@@ -6,10 +6,12 @@ import { getData } from './utils'
 import s from './Chart.m.scss'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
 import { last } from 'react-stockcharts/lib/utils'
+import Modal from '../Modal'
 
 const cx = classNames.bind(s)
 
 const ChartComponent = () => {
+  const [changeSym, setChangeSym] = useState(false)
   const [config, setConfig] = useState({})
 
   const [ref, { width, height }] = useDimensions()
@@ -44,12 +46,19 @@ const ChartComponent = () => {
   }, [config])
 
   const handleKeyDown = e => {
-    if (e.keyCode === 37) {
+    const letters = /Key[A-Za-z]/
+
+    if (e.code.match(letters)) {
+      setChangeSym(!changeSym)
+      console.log('--', e.key.toUpperCase())
+    }
+
+    if (e.key === 'ArrowLeft') {
       //step left
       const [first, last] = config.xExtents
       updateConfig({ xExtents: [first - 1, last - 1] })
     }
-    if (e.keyCode === 39) {
+    if (e.key === 'ArrowRight') {
       //step right
       const [first, last] = config.xExtents
       updateConfig({ xExtents: [first + 1, last + 1] })
@@ -76,6 +85,14 @@ const ChartComponent = () => {
       onMouseLeave={changeScroll}
       className={cx('container')}
     >
+      <Modal modalState={changeSym} closeModal={() => setChangeSym(false)}>
+        <input
+          className="input is-primary"
+          type="text"
+          placeholder="Enter symbol"
+        />
+      </Modal>
+
       <Chart
         config={config}
         updateConfig={updateConfig}
