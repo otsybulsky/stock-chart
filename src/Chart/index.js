@@ -44,12 +44,12 @@ const ChartComponent = () => {
   }, [config])
 
   const handleKeyDown = e => {
-    if (e.keyCode == 37) {
+    if (e.keyCode === 37) {
       //step left
       const [first, last] = config.xExtents
       updateConfig({ xExtents: [first - 1, last - 1] })
     }
-    if (e.keyCode == 39) {
+    if (e.keyCode === 39) {
       //step right
       const [first, last] = config.xExtents
       updateConfig({ xExtents: [first + 1, last + 1] })

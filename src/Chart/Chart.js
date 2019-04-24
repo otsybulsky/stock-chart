@@ -5,14 +5,12 @@ import { ChartCanvas, Chart } from 'react-stockcharts'
 import { BarSeries, CandlestickSeries } from 'react-stockcharts/lib/series'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
 
-import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
 import { fitWidth } from 'react-stockcharts/lib/helper'
-import { last } from 'react-stockcharts/lib/utils'
 
 import {
-  lastVisibleItemBasedZoomAnchor,
-  rightDomainBasedZoomAnchor,
-  mouseBasedZoomAnchor
+  // lastVisibleItemBasedZoomAnchor,
+  rightDomainBasedZoomAnchor
+  // mouseBasedZoomAnchor
 } from 'react-stockcharts/lib/utils/zoomBehavior'
 
 import {
@@ -24,18 +22,18 @@ import {
 import { format } from 'd3-format'
 import { timeFormat } from 'd3-time-format'
 
-import { OHLCTooltip, SingleValueTooltip } from 'react-stockcharts/lib/tooltip'
+import { OHLCTooltip } from 'react-stockcharts/lib/tooltip'
 
-const candlesAppearance = {
-  wickStroke: '#000000',
-  fill: function fill(d) {
-    return d.close > d.open ? '#268226' : 'red'
-  },
-  stroke: '#000000',
-  candleStrokeWidth: 1,
-  widthRatio: 0.8,
-  opacity: 1
-}
+// const candlesAppearance = {
+//   wickStroke: '#000000',
+//   fill: function fill(d) {
+//     return d.close > d.open ? '#268226' : 'red'
+//   },
+//   stroke: '#000000',
+//   candleStrokeWidth: 1,
+//   widthRatio: 0.8,
+//   opacity: 1
+// }
 
 class CandleStickStockScaleChart extends React.Component {
   componentDidMount() {
@@ -74,14 +72,7 @@ class CandleStickStockScaleChart extends React.Component {
 
   render() {
     const {
-      config: {
-        data,
-        xScale,
-        xAccessor,
-        displayXAccessor,
-        xExtents,
-        chartActive
-      }
+      config: { data, xScale, xAccessor, displayXAccessor, xExtents }
     } = this.props
     if (!data) {
       return null
