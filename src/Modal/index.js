@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
-const Modal = ({ children, closeModal, modalState }) => {
-  if (!modalState) {
-    return null
-  }
+const Modal = ({ children, noBackground, closeModal, modalState }) => {
+  if (!modalState) return null
 
   return (
     <div className="modal is-active">
-      <div className="modal-background" onClick={closeModal} />
+      {!noBackground && (
+        <div className="modal-background" onClick={closeModal} />
+      )}
       {children}
     </div>
   )

@@ -7,13 +7,17 @@ import s from './Chart.m.scss'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
 import { last } from 'react-stockcharts/lib/utils'
 import Modal from '../Modal'
+import GetSymbol from './GetSymbol'
 
 const cx = classNames.bind(s)
 
 const ChartComponent = () => {
-  const [changeSym, setChangeSym] = useState(false)
-  const [config, setConfig] = useState({})
+  const [symbolState, setSymbolState] = useState({
+    modalState: false,
+    symbol: ''
+  })
 
+  const [config, setConfig] = useState({})
   const [ref, { width, height }] = useDimensions()
 
   useEffect(() => {
@@ -45,12 +49,18 @@ const ChartComponent = () => {
     }
   }, [config])
 
+  useEffect(() => {
+    console.log('--', symbolState.symbol)
+  }, [symbolState.symbol])
+
   const handleKeyDown = e => {
     const letters = /Key[A-Za-z]/
 
     if (e.code.match(letters)) {
-      setChangeSym(!changeSym)
-      console.log('--', e.key.toUpperCase())
+      setSymbolState({
+        ...symbolState,
+        modalState: true
+      })
     }
 
     if (e.key === 'ArrowLeft') {
@@ -78,6 +88,20 @@ const ChartComponent = () => {
     document.body.style.overflow = style === 'hidden' ? 'auto' : 'hidden'
   }
 
+  const closeModal = ({ symbol = '' }) => {
+    const isUpdate = symbol && symbol !== symbolState.symbol
+
+    if (isUpdate) {
+      setSymbolState({
+        ...symbolState,
+        symbol,
+        modalState: false
+      })
+    } else {
+      setSymbolState({ ...symbolState, modalState: false })
+    }
+  }
+
   return (
     <div
       ref={ref}
@@ -85,12 +109,12 @@ const ChartComponent = () => {
       onMouseLeave={changeScroll}
       className={cx('container')}
     >
-      <Modal modalState={changeSym} closeModal={() => setChangeSym(false)}>
-        <input
-          className="input is-primary"
-          type="text"
-          placeholder="Enter symbol"
-        />
+      <Modal
+        noBackground
+        modalState={symbolState.modalState}
+        closeModal={closeModal}
+      >
+        <GetSymbol closeModal={closeModal} />
       </Modal>
 
       <Chart
