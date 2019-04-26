@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 
 const Modal = ({ children, noBackground, closeModal, modalState }) => {
   if (!modalState) return null

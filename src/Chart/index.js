@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import useDimensions from 'react-use-dimensions'
 import classNames from 'classnames/bind'
 import Chart from './Chart'
-import { getData } from './utils'
+import { getData, normalizeData } from './utils'
 import s from './Chart.m.scss'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
 import { last } from 'react-stockcharts/lib/utils'
@@ -20,22 +20,21 @@ const ChartComponent = () => {
   const [config, setConfig] = useState({})
   const [ref, { width, height }] = useDimensions()
 
+  const updateChart = initialData => {
+    const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
+      d => d.date
+    )
+    const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
+      initialData
+    )
+    const xExtents = [xAccessor(last(data)), xAccessor(data[data.length - 300])]
+    setConfig({ data, xScale, xAccessor, displayXAccessor, xExtents }) // тут відвалюється перехоплення клавіш
+  }
+
   useEffect(() => {
-    const fetchData = async () => {
-      const initialData = await getData()
-      const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
-        d => d.date
-      )
-      const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
-        initialData
-      )
-      const xExtents = [
-        xAccessor(last(data)),
-        xAccessor(data[data.length - 400])
-      ]
-      setConfig({ data, xScale, xAccessor, displayXAccessor, xExtents })
-    }
-    fetchData()
+    getData('SPY').then(initialData => {
+      updateChart(initialData)
+    })
   }, [])
 
   useEffect(() => {
@@ -50,7 +49,11 @@ const ChartComponent = () => {
   }, [config])
 
   useEffect(() => {
-    console.log('--', symbolState.symbol)
+    if (symbolState.symbol) {
+      getData(symbolState.symbol).then(initialData => {
+        updateChart(initialData)
+      })
+    }
   }, [symbolState.symbol])
 
   const handleKeyDown = e => {
