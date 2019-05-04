@@ -1,20 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { fetchData } from '../api'
+import { getStateFromStorage, saveStateToStorage } from './utils'
 
-const storageName = 'rechart-data-cache'
-
-const getStateFromStorage = () => {
-  const data = localStorage.getItem(storageName)
-  if (data) {
-    return JSON.parse(data)
-  }
-}
-
-const saveStateToStorage = data => {
-  localStorage.setItem(storageName, JSON.stringify(data))
-}
-
-//-----------------------------------------------------------
 const DataProvider = props => {
   //state
   const [data, setData] = useState({
