@@ -13,7 +13,7 @@ class App extends Component {
   render() {
     return (
       <DataProvider>
-        <Test />
+        <Chart />
       </DataProvider>
     )
   }

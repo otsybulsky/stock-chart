@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import useDimensions from 'react-use-dimensions'
 import classNames from 'classnames/bind'
 import Chart from './Chart'
-import { getData, normalizeData } from './utils'
 import s from './Chart.m.scss'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
 import { last } from 'react-stockcharts/lib/utils'
@@ -11,14 +10,30 @@ import GetSymbol from './GetSymbol'
 
 const cx = classNames.bind(s)
 
-const ChartComponent = () => {
+const normalizeData = data => {
+  const source = data['Time Series (1min)']
+
+  const candles = Object.keys(source)
+    .map(key => {
+      return {
+        date: new Date(key),
+        open: +source[key]['1. open'],
+        high: +source[key]['2. high'],
+        low: +source[key]['3. low'],
+        close: +source[key]['4. close'],
+        volume: +source[key]['5. volume']
+      }
+    })
+    .reverse()
+
+  return candles
+}
+
+const ChartComponent = ({ getData }) => {
   const [symbolState, setSymbolState] = useState({
     modalState: false,
     symbol: ''
   })
-
-  const [dataCache, setDataCache] = useState({ charts: {} })
-  const [firstLoad, setFirstLoad] = useState(false)
 
   const [config, setConfig] = useState({})
   const [ref, { width, height }] = useDimensions()
@@ -36,63 +51,11 @@ const ChartComponent = () => {
     setConfig({ data, xScale, xAccessor, displayXAccessor, xExtents }) // тут відвалюється перехоплення клавіш
   }
 
-  const resetDataCache = () => {
-    const data = {
-      cacheDate: new Date(Date.now()).toISOString(),
-      charts: {}
-    }
-    console.log('--set state', data)
-    setDataCache(data)
-  }
-
   useEffect(() => {
-    if (dataCache.cacheDate) {
-      localStorage.setItem('rechart-data-cache', JSON.stringify(dataCache))
-      console.log('--save', dataCache)
-    }
-
-    if (!firstLoad && dataCache.cacheDate) {
-      const symbol = 'SPY'
-      if (dataCache.charts[symbol]) {
-        console.log('--get from cache')
-        updateChart(dataCache.charts[symbol])
-      } else {
-        getData('SPY').then(apiData => {
-          console.log('--set cache')
-
-          const newData = {
-            ...dataCache,
-            charts: {
-              ...dataCache.charts,
-              [symbol]: apiData
-            }
-          }
-          console.log(newData, dataCache)
-          setDataCache(newData)
-          updateChart(apiData)
-        })
-      }
-      setFirstLoad(true)
-    }
-  }, [dataCache, firstLoad])
-
-  useEffect(() => {
-    const storedDataCache = localStorage.getItem('rechart-data-cache')
-
-    if (!storedDataCache) {
-      resetDataCache()
-    } else {
-      const data = JSON.parse(storedDataCache)
-      if (
-        !data.cacheDate ||
-        data.cacheDate.split('T')[0] !==
-          new Date(Date.now()).toISOString().split('T')[0]
-      ) {
-        resetDataCache()
-      } else {
-        setDataCache(data)
-      }
-    }
+    setSymbolState({
+      ...symbolState,
+      symbol: 'SPY'
+    })
   }, [])
 
   useEffect(() => {

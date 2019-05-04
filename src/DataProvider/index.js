@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { fetchData } from '../api'
 
-const storageName = 'test'
+const storageName = 'rechart-data-cache'
 
 const getStateFromStorage = () => {
   const data = localStorage.getItem(storageName)
@@ -12,25 +12,6 @@ const getStateFromStorage = () => {
 
 const saveStateToStorage = data => {
   localStorage.setItem(storageName, JSON.stringify(data))
-}
-
-export const normalizeData = data => {
-  const source = data['Time Series (1min)']
-
-  const candles = Object.keys(source)
-    .map(key => {
-      return {
-        date: new Date(key),
-        open: +source[key]['1. open'],
-        high: +source[key]['2. high'],
-        low: +source[key]['3. low'],
-        close: +source[key]['4. close'],
-        volume: +source[key]['5. volume']
-      }
-    })
-    .reverse()
-
-  return candles
 }
 
 //-----------------------------------------------------------
@@ -58,21 +39,24 @@ const DataProvider = props => {
 
   const getData = symbol => {
     if (data.currentDate) {
-      const cache = data.symbols[symbol]
-      if (cache) {
-        return normalizeData(cache)
-      }
-      //fetch data from api
-      fetchData(symbol).then(apiData => {
-        setData({
-          ...data,
-          symbols: {
-            ...data.symbols,
-            [symbol]: apiData
-          }
-        })
+      return new Promise(resolve => {
+        const cache = data.symbols[symbol]
+        if (cache) {
+          resolve(cache)
+        } else {
+          //fetch data from api
+          fetchData(symbol).then(apiData => {
+            setData({
+              ...data,
+              symbols: {
+                ...data.symbols,
+                [symbol]: apiData
+              }
+            })
 
-        return normalizeData(apiData)
+            resolve(apiData)
+          })
+        }
       })
     }
   }
