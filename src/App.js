@@ -4,8 +4,8 @@ import DataProvider from './DataProvider'
 import Chart from './Chart'
 
 const Test = props => {
-  const { getSymbol } = props
-  console.log(props, getSymbol('ABC'))
+  const { getData } = props
+  // console.log(props, getData())
   return null
 }
 
