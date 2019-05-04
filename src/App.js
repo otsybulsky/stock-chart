@@ -5,7 +5,7 @@ import Chart from './Chart'
 
 const Test = props => {
   const { getData } = props
-  // console.log(props, getData())
+  console.log(props, getData('ZYNE'))
   return null
 }
 
