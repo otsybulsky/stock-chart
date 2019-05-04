@@ -23,7 +23,6 @@ export const getData = symbol => {
   return fetch(apiUrl)
     .then(response => response.json())
     .then(apiData => {
-      const initialData = normalizeData(apiData)
-      return initialData
+      return apiData
     })
 }

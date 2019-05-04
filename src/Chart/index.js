@@ -17,10 +17,15 @@ const ChartComponent = () => {
     symbol: ''
   })
 
+  const [dataCache, setDataCache] = useState({ charts: {} })
+  const [firstLoad, setFirstLoad] = useState(false)
+
   const [config, setConfig] = useState({})
   const [ref, { width, height }] = useDimensions()
 
-  const updateChart = initialData => {
+  const updateChart = apiData => {
+    const initialData = normalizeData(apiData)
+
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
       d => d.date
     )
@@ -31,10 +36,63 @@ const ChartComponent = () => {
     setConfig({ data, xScale, xAccessor, displayXAccessor, xExtents }) // тут відвалюється перехоплення клавіш
   }
 
+  const resetDataCache = () => {
+    const data = {
+      cacheDate: new Date(Date.now()).toISOString(),
+      charts: {}
+    }
+    console.log('--set state', data)
+    setDataCache(data)
+  }
+
   useEffect(() => {
-    getData('SPY').then(initialData => {
-      updateChart(initialData)
-    })
+    if (dataCache.cacheDate) {
+      localStorage.setItem('rechart-data-cache', JSON.stringify(dataCache))
+      console.log('--save', dataCache)
+    }
+
+    if (!firstLoad && dataCache.cacheDate) {
+      const symbol = 'SPY'
+      if (dataCache.charts[symbol]) {
+        console.log('--get from cache')
+        updateChart(dataCache.charts[symbol])
+      } else {
+        getData('SPY').then(apiData => {
+          console.log('--set cache')
+
+          const newData = {
+            ...dataCache,
+            charts: {
+              ...dataCache.charts,
+              [symbol]: apiData
+            }
+          }
+          console.log(newData, dataCache)
+          setDataCache(newData)
+          updateChart(apiData)
+        })
+      }
+      setFirstLoad(true)
+    }
+  }, [dataCache, firstLoad])
+
+  useEffect(() => {
+    const storedDataCache = localStorage.getItem('rechart-data-cache')
+
+    if (!storedDataCache) {
+      resetDataCache()
+    } else {
+      const data = JSON.parse(storedDataCache)
+      if (
+        !data.cacheDate ||
+        data.cacheDate.split('T')[0] !==
+          new Date(Date.now()).toISOString().split('T')[0]
+      ) {
+        resetDataCache()
+      } else {
+        setDataCache(data)
+      }
+    }
   }, [])
 
   useEffect(() => {
