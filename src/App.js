@@ -1,32 +1,22 @@
 import React, { Component } from 'react'
-// import logo from './logo.svg'
 import './App.css'
+import DataProvider from './DataProvider'
 import Chart from './Chart'
+
+const Test = props => {
+  const { getSymbol } = props
+  console.log(props, getSymbol('ABC'))
+  return null
+}
 
 class App extends Component {
   render() {
-    return <Chart />
+    return (
+      <DataProvider>
+        <Test />
+      </DataProvider>
+    )
   }
-  // render() {
-  //   return (
-  //     <div className="App">
-  //       <header className="App-header">
-  //         <img src={logo} className="App-logo" alt="logo" />
-  //         <p>
-  //           Edit <code>src/App.js</code> and save to reload.
-  //         </p>
-  //         <a
-  //           className="App-link"
-  //           href="https://reactjs.org"
-  //           target="_blank"
-  //           rel="noopener noreferrer"
-  //         >
-  //           Learn React
-  //         </a>
-  //       </header>
-  //     </div>
-  //   );
-  // }
 }
 
 export default App
