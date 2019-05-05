@@ -1,8 +1,23 @@
 .container {
-  height: 90vh;
-  width: 90%;
+  height: 98vh;
+  width: 97%;
   margin: 0.5rem;
   border: 1px solid gray;
+
+  display: flex;
+  flex-direction: column
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  padding-left: 0.5rem;
+  height: 2.5rem;
+  border-bottom: 1px solid gray;
+}
+
+.chart {
+  flex: 1;
 }
 
 

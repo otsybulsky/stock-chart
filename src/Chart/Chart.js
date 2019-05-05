@@ -83,7 +83,7 @@ class CandleStickStockScaleChart extends React.Component {
     }
     const { type, height, width, ratio } = this.props
 
-    const margin = { left: 10, right: 50, top: 10, bottom: 10 }
+    const margin = { left: 0, right: 50, top: 10, bottom: 10 }
     const gridHeight = height - margin.top - margin.bottom
     const gridWidth = width - margin.left - margin.right
 
@@ -135,7 +135,7 @@ class CandleStickStockScaleChart extends React.Component {
           <OHLCTooltip
             className={cx('chart-tooltip')}
             fontSize={14}
-            origin={[0, 0]}
+            origin={[8, 0]}
           />
           <CandlestickSeries />
         </Chart>

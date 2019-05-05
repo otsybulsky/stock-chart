@@ -7,6 +7,7 @@ import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
 import { last } from 'react-stockcharts/lib/utils'
 import Modal from '../Modal'
 import GetSymbol from './GetSymbol'
+import TopBar from './TopBar'
 
 const cx = classNames.bind(s)
 
@@ -140,11 +141,12 @@ const ChartComponent = ({ getData }) => {
       >
         <GetSymbol closeModal={closeModal} />
       </Modal>
-
+      <TopBar symbol={symbolState.symbol} />
       <Chart
+        className={cx('chart')}
         config={config}
         updateConfig={updateConfig}
-        height={height}
+        height={height - 40}
         width={width}
       />
     </div>
