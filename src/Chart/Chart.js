@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames/bind'
+import s from './Chart.m.scss'
 
 import { ChartCanvas, Chart } from 'react-stockcharts'
 import { BarSeries, CandlestickSeries } from 'react-stockcharts/lib/series'
@@ -23,6 +25,8 @@ import { format } from 'd3-format'
 import { timeFormat } from 'd3-time-format'
 
 import { OHLCTooltip } from 'react-stockcharts/lib/tooltip'
+
+const cx = classNames.bind(s)
 
 // const candlesAppearance = {
 //   wickStroke: '#000000',
@@ -107,7 +111,6 @@ class CandleStickStockScaleChart extends React.Component {
         margin={margin}
         padding={{ left: 10, right: 10 }}
         type={type}
-        seriesName="WTW"
         data={data}
         xScale={xScale}
         xAccessor={xAccessor}
@@ -129,7 +132,11 @@ class CandleStickStockScaleChart extends React.Component {
             displayFormat={format('.2f')}
           />
           <CandlestickSeries />
-          <OHLCTooltip fontSize={12} origin={[0, 0]} />
+          <OHLCTooltip
+            className={cx('chart-tooltip')}
+            fontSize={14}
+            origin={[0, 0]}
+          />
           <CandlestickSeries />
         </Chart>
 
