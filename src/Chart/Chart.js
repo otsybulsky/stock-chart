@@ -28,16 +28,16 @@ import { OHLCTooltip } from 'react-stockcharts/lib/tooltip'
 
 const cx = classNames.bind(s)
 
-// const candlesAppearance = {
-//   wickStroke: '#000000',
-//   fill: function fill(d) {
-//     return d.close > d.open ? '#268226' : 'red'
-//   },
-//   stroke: '#000000',
-//   candleStrokeWidth: 1,
-//   widthRatio: 0.8,
-//   opacity: 1
-// }
+const candlesAppearance = {
+  wickStroke: '#000000',
+  fill: function fill(d) {
+    return d.close > d.open ? 'green' : 'red'
+  },
+  stroke: '#000000',
+  candleStrokeWidth: 1,
+  widthRatio: 0.8,
+  opacity: 1
+}
 
 class CandleStickStockScaleChart extends React.Component {
   componentDidMount() {
@@ -137,7 +137,7 @@ class CandleStickStockScaleChart extends React.Component {
             fontSize={14}
             origin={[8, 0]}
           />
-          <CandlestickSeries />
+          <CandlestickSeries {...candlesAppearance} />
         </Chart>
 
         <Chart
