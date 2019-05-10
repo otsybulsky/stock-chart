@@ -49,7 +49,14 @@ const ChartComponent = ({ getData }) => {
       initialData
     )
     const xExtents = [xAccessor(last(data)), xAccessor(data[data.length - 300])]
-    setConfig({ data, xScale, xAccessor, displayXAccessor, xExtents }) // тут відвалюється перехоплення клавіш
+    setConfig({
+      chartActive: true,
+      data,
+      xScale,
+      xAccessor,
+      displayXAccessor,
+      xExtents
+    })
   }
 
   useEffect(() => {
