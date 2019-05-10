@@ -89,13 +89,13 @@ class CandleStickStockScaleChart extends React.Component {
 
     const yGrid = {
       innerTickSize: -1 * gridWidth,
-      tickStrokeDasharray: 'Solid',
+      tickStrokeDasharray: 'Dot',
       tickStrokeOpacity: 0.2,
       tickStrokeWidth: 1
     }
     const xGrid = {
       innerTickSize: -1 * gridHeight,
-      tickStrokeDasharray: 'Solid',
+      tickStrokeDasharray: 'Dot',
       tickStrokeOpacity: 0.2,
       tickStrokeWidth: 1
     }
