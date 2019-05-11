@@ -35,7 +35,7 @@ const ChartComponent = ({ getData }) => {
     modalState: false,
     symbol: ''
   })
-
+  const [loading, setLoading] = useState(false)
   const [config, setConfig] = useState({})
   const [ref, { width, height }] = useDimensions()
 
@@ -79,8 +79,10 @@ const ChartComponent = ({ getData }) => {
 
   useEffect(() => {
     if (symbolState.symbol) {
+      setLoading(true)
       getData(symbolState.symbol).then(initialData => {
         updateChart(initialData)
+        setLoading(false)
       })
     }
   }, [symbolState.symbol])
@@ -148,14 +150,16 @@ const ChartComponent = ({ getData }) => {
       >
         <GetSymbol closeModal={closeModal} />
       </Modal>
-      <TopBar symbol={symbolState.symbol} />
-      <Chart
-        className={cx('chart')}
-        config={config}
-        updateConfig={updateConfig}
-        height={height - 40}
-        width={width}
-      />
+      <TopBar symbol={symbolState.symbol} loading={loading} />
+      {!loading && (
+        <Chart
+          className={cx('chart')}
+          config={config}
+          updateConfig={updateConfig}
+          height={height - 40}
+          width={width}
+        />
+      )}
     </div>
   )
 }

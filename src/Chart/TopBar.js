@@ -4,10 +4,12 @@ import s from './Chart.m.scss'
 
 const cx = classNames.bind(s)
 
-const TopBar = ({ symbol }) => {
+const TopBar = ({ symbol, loading }) => {
   return (
     <div className={cx('top-bar')}>
-      <span>Ticker: {symbol}</span>
+      <span>
+        Ticker: {symbol} {loading && ' loading ...'}
+      </span>
     </div>
   )
 }
