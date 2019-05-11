@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import useDimensions from 'react-use-dimensions'
 import classNames from 'classnames/bind'
 import Chart from './Chart'
@@ -13,6 +13,10 @@ const cx = classNames.bind(s)
 
 const normalizeData = data => {
   const source = data['Time Series (1min)']
+
+  if (!source) {
+    return null
+  }
 
   const candles = Object.keys(source)
     .map(key => {
@@ -30,23 +34,30 @@ const normalizeData = data => {
   return candles
 }
 
+const usePrevious = value => {
+  const ref = useRef()
+  useEffect(() => {
+    ref.current = value
+  })
+  return ref.current
+}
+
 const ChartComponent = ({ getData }) => {
   const [symbolState, setSymbolState] = useState({
     modalState: false,
     symbol: ''
   })
+  const previousSymbol = usePrevious(symbolState.symbol)
   const [loading, setLoading] = useState(false)
   const [config, setConfig] = useState({})
   const [ref, { width, height }] = useDimensions()
 
   const updateChart = apiData => {
-    const initialData = normalizeData(apiData)
-
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
       d => d.date
     )
     const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
-      initialData
+      apiData
     )
     const xExtents = [xAccessor(last(data)), xAccessor(data[data.length - 300])]
     setConfig({
@@ -81,7 +92,16 @@ const ChartComponent = ({ getData }) => {
     if (symbolState.symbol) {
       setLoading(true)
       getData(symbolState.symbol).then(initialData => {
-        updateChart(initialData)
+        const apiData = normalizeData(initialData)
+
+        if (apiData) {
+          updateChart(apiData)
+        } else {
+          setSymbolState({
+            ...symbolState,
+            symbol: previousSymbol
+          })
+        }
         setLoading(false)
       })
     }
