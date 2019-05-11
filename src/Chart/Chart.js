@@ -3,10 +3,9 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames/bind'
 import s from './Chart.m.scss'
 
-import { ChartCanvas, Chart } from 'react-stockcharts'
+import { ChartCanvas, Chart, ZoomButtons } from 'react-stockcharts'
 import { BarSeries, CandlestickSeries } from 'react-stockcharts/lib/series'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
-
 import { fitWidth } from 'react-stockcharts/lib/helper'
 
 import {
@@ -40,7 +39,12 @@ const candlesAppearance = {
 }
 
 class CandleStickStockScaleChart extends React.Component {
+  startXExtents = null
   componentDidMount() {
+    const {
+      config: { xExtents }
+    } = this.props
+    this.startXExtents = xExtents
     this.node.subscribe('myUniqueId', { listener: this.handleEvents })
   }
 
@@ -61,7 +65,8 @@ class CandleStickStockScaleChart extends React.Component {
     const types = ['zoom', 'pan', 'paned']
 
     if (type === mouseTypes.mouseEnter) {
-      updateConfig({ chartActive: true })
+      const { xScale } = state
+      updateConfig({ chartActive: true, xExtents: xScale.domain() })
     }
 
     if (type === mouseTypes.mouseLeave) {
@@ -72,6 +77,12 @@ class CandleStickStockScaleChart extends React.Component {
       const { xScale } = moreProps
       updateConfig({ xExtents: xScale.domain() })
     }
+  }
+
+  onResetZoom = () => {
+    const { updateConfig } = this.props
+
+    updateConfig({ chartActive: true, xExtents: this.startXExtents })
   }
 
   render() {
@@ -131,13 +142,14 @@ class CandleStickStockScaleChart extends React.Component {
             orient="right"
             displayFormat={format('.2f')}
           />
-          <CandlestickSeries />
+          <CandlestickSeries {...candlesAppearance} />
           <OHLCTooltip
             className={cx('chart-tooltip')}
             fontSize={14}
             origin={[8, 0]}
           />
-          <CandlestickSeries {...candlesAppearance} />
+
+          <ZoomButtons onReset={this.onResetZoom} />
         </Chart>
 
         <Chart
