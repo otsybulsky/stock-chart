@@ -2,6 +2,29 @@ import React, { useState, useEffect } from 'react'
 import { fetchData } from '../api'
 import { getStateFromStorage, saveStateToStorage } from './utils'
 
+const normalizeDataAlphaVantage = data => {
+  const source = data['Time Series (1min)']
+
+  if (!source) {
+    return null
+  }
+
+  const candles = Object.keys(source)
+    .map(key => {
+      return {
+        date: new Date(key),
+        open: +source[key]['1. open'],
+        high: +source[key]['2. high'],
+        low: +source[key]['3. low'],
+        close: +source[key]['4. close'],
+        volume: +source[key]['5. volume']
+      }
+    })
+    .reverse()
+
+  return candles
+}
+
 const DataProvider = props => {
   //state
   const [data, setData] = useState({
@@ -33,15 +56,46 @@ const DataProvider = props => {
         } else {
           //fetch data from api
           fetchData(symbol).then(apiData => {
-            setData({
-              ...data,
-              symbols: {
-                ...data.symbols,
-                [symbol]: apiData
-              }
-            })
+            const {
+              chart: { result, error }
+            } = apiData
+            if (error) {
+              resolve({ error: { message: 'API returns error', error } })
+            } else {
+              const data = result[0]
+              if (!data['timestamp']) {
+                resolve({ error: { message: 'Bad data', data } })
+              } else {
+                const quote = data.indicators.quote[0]
+                const chart = data.timestamp
+                  .map((item, i) => ({
+                    date: new Date(item * 1000),
+                    open: quote.open[i],
+                    high: quote.high[i],
+                    low: quote.low[i],
+                    close: quote.close[i],
+                    volume: quote.volume[i]
+                  }))
+                  .filter(
+                    candle =>
+                      candle.open &&
+                      candle.high &&
+                      candle.low &&
+                      candle.close &&
+                      candle.volume
+                  )
 
-            resolve(apiData)
+                // setData({
+                //   ...data,
+                //   symbols: {
+                //     ...data.symbols,
+                //     [symbol]: apiData
+                //   }
+                // })
+
+                resolve({ chart })
+              }
+            }
           })
         }
       })

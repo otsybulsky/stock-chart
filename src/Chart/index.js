@@ -11,29 +11,6 @@ import TopBar from './TopBar'
 
 const cx = classNames.bind(s)
 
-const normalizeData = data => {
-  const source = data['Time Series (1min)']
-
-  if (!source) {
-    return null
-  }
-
-  const candles = Object.keys(source)
-    .map(key => {
-      return {
-        date: new Date(key),
-        open: +source[key]['1. open'],
-        high: +source[key]['2. high'],
-        low: +source[key]['3. low'],
-        close: +source[key]['4. close'],
-        volume: +source[key]['5. volume']
-      }
-    })
-    .reverse()
-
-  return candles
-}
-
 const usePrevious = value => {
   const ref = useRef()
   useEffect(() => {
@@ -59,7 +36,7 @@ const ChartComponent = ({ getData }) => {
     const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
       apiData
     )
-    const xExtents = [xAccessor(last(data)), xAccessor(data[data.length - 300])]
+    const xExtents = [xAccessor(last(data)), xAccessor(data[data.length - 450])]
     setConfig({
       chartActive: true,
       data,
@@ -91,12 +68,11 @@ const ChartComponent = ({ getData }) => {
   useEffect(() => {
     if (symbolState.symbol) {
       setLoading(true)
-      getData(symbolState.symbol).then(initialData => {
-        const apiData = normalizeData(initialData)
-
-        if (apiData) {
-          updateChart(apiData)
+      getData(symbolState.symbol).then(({ error, chart }) => {
+        if (!error) {
+          updateChart(chart)
         } else {
+          console.log('--', symbolState.symbol, error)
           setSymbolState({
             ...symbolState,
             symbol: previousSymbol
