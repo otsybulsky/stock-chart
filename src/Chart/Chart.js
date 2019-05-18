@@ -17,7 +17,8 @@ import {
 import {
   CrossHairCursor,
   MouseCoordinateX,
-  MouseCoordinateY
+  MouseCoordinateY,
+  EdgeIndicator
 } from 'react-stockcharts/lib/coordinates'
 
 import { format } from 'd3-format'
@@ -120,7 +121,7 @@ class CandleStickStockScaleChart extends React.Component {
         ratio={ratio}
         width={width}
         margin={margin}
-        padding={{ left: 10, right: 10 }}
+        padding={{ left: 10, right: 20 }}
         type={type}
         data={data}
         xScale={xScale}
@@ -143,6 +144,15 @@ class CandleStickStockScaleChart extends React.Component {
             displayFormat={format('.2f')}
           />
           <CandlestickSeries {...candlesAppearance} />
+
+          <EdgeIndicator
+            itemType="last"
+            orient="right"
+            edgeAt="right"
+            yAccessor={d => d.close}
+            fill={d => (d.close > d.open ? '#6BA583' : '#DB0000')}
+          />
+
           <OHLCTooltip
             className={cx('chart-tooltip')}
             fontSize={14}

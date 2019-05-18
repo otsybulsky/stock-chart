@@ -27,6 +27,7 @@ const ChartComponent = ({ getData }) => {
   const previousSymbol = usePrevious(symbolState.symbol)
   const [loading, setLoading] = useState(false)
   const [config, setConfig] = useState({})
+  const [lastVisibleCandle, setLastVisibleCandle] = useState(null)
   const [ref, { width, height }] = useDimensions()
 
   const updateChart = apiData => {
@@ -55,6 +56,14 @@ const ChartComponent = ({ getData }) => {
   }, [])
 
   useEffect(() => {
+    console.log('--', lastVisibleCandle)
+  }, [lastVisibleCandle])
+
+  useEffect(() => {
+    if (config.xExtents && config.xExtents.length === 2) {
+      setLastVisibleCandle(config.data[~~config.xExtents[1]]) //~~ двойное битовое НЕ, возвращает целую часть числа
+    }
+
     if (config.chartActive) {
       document.addEventListener('keydown', handleKeyDown)
       return () => {
