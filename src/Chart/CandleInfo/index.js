@@ -25,12 +25,13 @@ const CandleInfo = ({ candle }) => {
 
   return (
     <div className={s.container}>
-      {dateToString(candle.date)}
-      <div className={s.field}>O:{candle.open}</div>
-      <div className={s.field}>H:{candle.high}</div>
-      <div className={s.field}>L:{candle.low}</div>
-      <div className={s.field}>C:{candle.close}</div>
       <div className={s.field}>{volumeToString(candle.volume)}</div>
+      <div className={s.field}>{dateToString(candle.date)}</div>
+
+      <div className={s.field}>O:{candle.open.toFixed(2)}</div>
+      <div className={s.field}>H:{candle.high.toFixed(2)}</div>
+      <div className={s.field}>L:{candle.low.toFixed(2)}</div>
+      <div className={s.field}>C:{candle.close.toFixed(2)}</div>
     </div>
   )
 }
