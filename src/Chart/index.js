@@ -8,6 +8,7 @@ import { last } from 'react-stockcharts/lib/utils'
 import Modal from '../Modal'
 import GetSymbol from './GetSymbol'
 import TopBar from './TopBar'
+import { getChartConfigWithUpdatedYScales } from 'react-stockcharts/lib/utils/ChartDataUtil'
 
 const cx = classNames.bind(s)
 
@@ -60,7 +61,10 @@ const ChartComponent = ({ getData }) => {
 
   useEffect(() => {
     if (config.xExtents && config.xExtents.length === 2) {
-      setLastVisibleCandle(config.data[~~config.xExtents[1]]) //~~ двойное битовое НЕ, возвращает целую часть числа
+      const ind = ~~config.xExtents[1] //~~ двойное битовое НЕ, возвращает целую часть числа
+      if (ind < config.data.length) {
+        setLastVisibleCandle(config.data[ind])
+      }
     }
 
     if (config.chartActive) {
@@ -104,12 +108,16 @@ const ChartComponent = ({ getData }) => {
     if (e.key === 'ArrowLeft') {
       //step left
       const [first, last] = config.xExtents
-      updateConfig({ xExtents: [first - 1, last - 1] })
+      if (~~first - 1 >= -1) {
+        updateConfig({ xExtents: [first - 1, last - 1] })
+      }
     }
     if (e.key === 'ArrowRight') {
       //step right
       const [first, last] = config.xExtents
-      updateConfig({ xExtents: [first + 1, last + 1] })
+      if (~~last + 1 < config.data.length) {
+        updateConfig({ xExtents: [first + 1, last + 1] })
+      }
     }
   }
 
