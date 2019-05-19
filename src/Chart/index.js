@@ -56,10 +56,6 @@ const ChartComponent = ({ getData }) => {
   }, [])
 
   useEffect(() => {
-    console.log('--', lastVisibleCandle)
-  }, [lastVisibleCandle])
-
-  useEffect(() => {
     if (config.xExtents && config.xExtents.length === 2) {
       setLastVisibleCandle(config.data[~~config.xExtents[1]]) //~~ двойное битовое НЕ, возвращает целую часть числа
     }

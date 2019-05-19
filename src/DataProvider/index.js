@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { fetchData } from '../api'
 import { getStateFromStorage, saveStateToStorage } from './utils'
+import { roundNumber } from 'shared/utils'
 
 const normalizeDataAlphaVantage = data => {
   const source = data['Time Series (1min)']
@@ -73,11 +74,11 @@ const DataProvider = props => {
                   .map((item, i) => {
                     return {
                       date: new Date((item - 14400) * 1000 + currentDateOffset),
-                      open: quote.open[i],
-                      high: quote.high[i],
-                      low: quote.low[i],
-                      close: quote.close[i],
-                      volume: quote.volume[i]
+                      open: roundNumber(quote.open[i]),
+                      high: roundNumber(quote.high[i]),
+                      low: roundNumber(quote.low[i]),
+                      close: roundNumber(quote.close[i]),
+                      volume: roundNumber(quote.volume[i], 0)
                     }
                   })
                   .filter(
