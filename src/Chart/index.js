@@ -155,7 +155,11 @@ const ChartComponent = ({ getData }) => {
       >
         <GetSymbol closeModal={closeModal} />
       </Modal>
-      <TopBar symbol={symbolState.symbol} loading={loading} />
+      <TopBar
+        symbol={symbolState.symbol}
+        loading={loading}
+        lastVisibleCandle={lastVisibleCandle}
+      />
       {!loading && (
         <Chart
           className={cx('chart')}
