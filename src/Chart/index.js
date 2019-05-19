@@ -164,7 +164,7 @@ const ChartComponent = ({ getData }) => {
         lastVisibleCandle={lastVisibleCandle}
         onTickerClick={onTickerClick}
       />
-      {!loading && (
+      {!loading && config.data && width && (
         <Chart
           className={cx('chart')}
           config={config}

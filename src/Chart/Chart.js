@@ -117,6 +117,7 @@ class CandleStickStockScaleChart extends React.Component {
         ref={node => {
           this.node = node
         }}
+        seriesName={''}
         height={height}
         ratio={ratio}
         width={width}
@@ -200,7 +201,7 @@ class CandleStickStockScaleChart extends React.Component {
 }
 
 CandleStickStockScaleChart.propTypes = {
-  data: PropTypes.array.isRequired,
+  config: PropTypes.object.isRequired,
   width: PropTypes.number.isRequired,
   ratio: PropTypes.number.isRequired,
   type: PropTypes.oneOf(['svg', 'hybrid']).isRequired
