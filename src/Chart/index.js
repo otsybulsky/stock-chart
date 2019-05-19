@@ -37,7 +37,10 @@ const ChartComponent = ({ getData }) => {
     const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
       apiData
     )
-    const xExtents = [xAccessor(last(data)), xAccessor(data[data.length - 450])]
+    const xExtents = [
+      xAccessor(last(data)),
+      xAccessor(data[data.length - Math.min(data.length, 400)])
+    ]
     setConfig({
       chartActive: true,
       data,
