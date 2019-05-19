@@ -137,6 +137,13 @@ const ChartComponent = ({ getData }) => {
     }
   }
 
+  const onTickerClick = () => {
+    setSymbolState({
+      ...symbolState,
+      modalState: true
+    })
+  }
+
   return (
     <div
       ref={ref}
@@ -155,6 +162,7 @@ const ChartComponent = ({ getData }) => {
         symbol={symbolState.symbol}
         loading={loading}
         lastVisibleCandle={lastVisibleCandle}
+        onTickerClick={onTickerClick}
       />
       {!loading && (
         <Chart

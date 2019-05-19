@@ -5,12 +5,12 @@ import CandleInfo from './CandleInfo'
 
 const cx = classNames.bind(s)
 
-const TopBar = ({ symbol, loading, lastVisibleCandle }) => {
+const TopBar = ({ symbol, loading, lastVisibleCandle, onTickerClick }) => {
   return (
     <div className={cx('top-bar')}>
-      <span>
+      <div onClick={onTickerClick}>
         Ticker: {symbol} {loading && ' loading ...'}
-      </span>
+      </div>
       <CandleInfo candle={lastVisibleCandle} />
     </div>
   )
