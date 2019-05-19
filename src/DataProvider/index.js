@@ -47,6 +47,8 @@ const DataProvider = props => {
     )
   }
 
+  const currentDateOffset = new Date().getTimezoneOffset() * 60 * 1000
+
   const getData = symbol => {
     if (data.currentDate) {
       return new Promise(resolve => {
@@ -68,14 +70,16 @@ const DataProvider = props => {
               } else {
                 const quote = data.indicators.quote[0]
                 const chart = data.timestamp
-                  .map((item, i) => ({
-                    date: new Date(item * 1000),
-                    open: quote.open[i],
-                    high: quote.high[i],
-                    low: quote.low[i],
-                    close: quote.close[i],
-                    volume: quote.volume[i]
-                  }))
+                  .map((item, i) => {
+                    return {
+                      date: new Date((item - 14400) * 1000 + currentDateOffset),
+                      open: quote.open[i],
+                      high: quote.high[i],
+                      low: quote.low[i],
+                      close: quote.close[i],
+                      volume: quote.volume[i]
+                    }
+                  })
                   .filter(
                     candle =>
                       candle.open &&
