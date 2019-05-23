@@ -8,6 +8,7 @@ import { last } from 'react-stockcharts/lib/utils'
 import Modal from '../Modal'
 import GetSymbol from './GetSymbol'
 import TopBar from './TopBar'
+import { getData } from 'api'
 
 const cx = classNames.bind(s)
 
@@ -19,7 +20,7 @@ const usePrevious = value => {
   return ref.current
 }
 
-const ChartComponent = ({ getData }) => {
+const ChartComponent = props => {
   const [symbolState, setSymbolState] = useState({
     modalState: false,
     symbol: ''
@@ -154,6 +155,8 @@ const ChartComponent = ({ getData }) => {
     })
   }
 
+  console.log('--', width, height)
+
   return (
     <div
       ref={ref}
@@ -174,7 +177,7 @@ const ChartComponent = ({ getData }) => {
         lastVisibleCandle={lastVisibleCandle}
         onTickerClick={onTickerClick}
       />
-      {!loading && config.data && width && (
+      {!loading && config.data && height && (
         <Chart
           className={cx('chart')}
           config={config}
