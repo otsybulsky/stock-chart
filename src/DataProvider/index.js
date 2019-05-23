@@ -3,29 +3,6 @@ import { fetchData } from '../api'
 import { getStateFromStorage, saveStateToStorage } from './utils'
 import { roundNumber } from 'shared/utils'
 
-const normalizeDataAlphaVantage = data => {
-  const source = data['Time Series (1min)']
-
-  if (!source) {
-    return null
-  }
-
-  const candles = Object.keys(source)
-    .map(key => {
-      return {
-        date: new Date(key),
-        open: +source[key]['1. open'],
-        high: +source[key]['2. high'],
-        low: +source[key]['3. low'],
-        close: +source[key]['4. close'],
-        volume: +source[key]['5. volume']
-      }
-    })
-    .reverse()
-
-  return candles
-}
-
 const DataProvider = props => {
   //state
   const [data, setData] = useState({

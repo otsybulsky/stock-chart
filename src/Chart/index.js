@@ -8,7 +8,6 @@ import { last } from 'react-stockcharts/lib/utils'
 import Modal from '../Modal'
 import GetSymbol from './GetSymbol'
 import TopBar from './TopBar'
-import { getChartConfigWithUpdatedYScales } from 'react-stockcharts/lib/utils/ChartDataUtil'
 
 const cx = classNames.bind(s)
 
