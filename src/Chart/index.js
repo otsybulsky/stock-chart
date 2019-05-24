@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-import useDimensions from 'react-use-dimensions'
 import classNames from 'classnames/bind'
 import Chart from './Chart'
 import s from './Chart.m.scss'
@@ -29,7 +28,6 @@ const ChartComponent = props => {
   const [loading, setLoading] = useState(false)
   const [config, setConfig] = useState({})
   const [lastVisibleCandle, setLastVisibleCandle] = useState(null)
-  const [ref, { width, height }] = useDimensions()
 
   const updateChart = apiData => {
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
@@ -155,11 +153,8 @@ const ChartComponent = props => {
     })
   }
 
-  console.log('--', width, height)
-
   return (
     <div
-      ref={ref}
       onMouseEnter={changeScroll}
       onMouseLeave={changeScroll}
       className={cx('container')}
@@ -177,13 +172,13 @@ const ChartComponent = props => {
         lastVisibleCandle={lastVisibleCandle}
         onTickerClick={onTickerClick}
       />
-      {!loading && config.data && height && (
+      {!loading && config.data && props.height && (
         <Chart
           className={cx('chart')}
           config={config}
           updateConfig={updateConfig}
-          height={height - 40}
-          width={width}
+          height={parseInt(props.height) - 40 - 40}
+          width={parseInt(props.width) - 40}
         />
       )}
     </div>
