@@ -6,7 +6,7 @@ import { StoreContext } from 'shared/context'
 import Chart from '../Chart'
 
 const Layout = ({ size }) => {
-  const { layout, onLayoutChange, currentTime } = useContext(StoreContext)
+  const { layout, onLayoutChange } = useContext(StoreContext)
 
   const cols = 36
 

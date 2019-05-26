@@ -31,9 +31,7 @@ const StoreProvider = ({ children }) => {
   }, [layout])
 
   return (
-    <StoreContext.Provider
-      value={{ currentTime: () => Date.now(), layout, onLayoutChange }}
-    >
+    <StoreContext.Provider value={{ layout, onLayoutChange }}>
       {children}
     </StoreContext.Provider>
   )
