@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import './Layout.css'
 import Wrapper from './Wrapper'
 import GridLayout from 'react-grid-layout'
 import { StoreContext } from 'shared/context'

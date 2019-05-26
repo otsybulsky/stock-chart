@@ -24,7 +24,6 @@ const StoreProvider = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    console.log('-', layout)
     if (layout.length) {
       saveStateToStorage({ layout })
     }

@@ -153,6 +153,13 @@ const ChartComponent = props => {
     })
   }
 
+  const width = parseInt(props.width)
+  const height = parseInt(props.height)
+
+  if (!(width > 0 && height > 0)) {
+    return null
+  }
+
   return (
     <div
       onMouseEnter={changeScroll}
@@ -177,8 +184,8 @@ const ChartComponent = props => {
           className={cx('chart')}
           config={config}
           updateConfig={updateConfig}
-          height={parseInt(props.height) - 40 - 40}
-          width={parseInt(props.width) - 40}
+          height={height - 40 - 10}
+          width={width - 10}
         />
       )}
     </div>
