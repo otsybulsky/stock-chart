@@ -19,14 +19,14 @@ const Layout = ({ size }) => {
       cols={12}
       rowHeight={size.height / 12}
       width={size.width}
-      isResizable
-      onResizeStop={(layout, oldItem, newItem, placeholder, e, element) => {
-        const { i, x, y, w, h } = newItem
-        changeLayout({
-          ...layoutState,
-          [i]: { x, y, w, h }
-        })
-      }}
+      // isResizable
+      // onResizeStop={(layout, oldItem, newItem, placeholder, e, element) => {
+      //   const { i, x, y, w, h } = newItem
+      //   changeLayout({
+      //     ...layoutState,
+      //     [i]: { x, y, w, h }
+      //   })
+      // }}
     >
       {Object.keys(layoutState).map(key => {
         const cellConfig = layoutState[key]
