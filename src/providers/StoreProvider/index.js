@@ -10,9 +10,14 @@ const defaultLayout = [
 
 const StoreProvider = ({ children }) => {
   const [layout, setLayout] = useState([])
+  const [isStart, setIsStart] = useState(true)
 
   const onLayoutChange = newLayout => {
     setLayout(newLayout)
+  }
+
+  const removeItemFromLayout = id => {
+    setLayout(layout.filter(item => item.i !== id))
   }
 
   useEffect(() => {
@@ -22,16 +27,19 @@ const StoreProvider = ({ children }) => {
     } else {
       setLayout(defaultLayout)
     }
+    setIsStart(false)
   }, [])
 
   useEffect(() => {
-    if (layout.length) {
+    if (!isStart) {
       saveStateToStorage({ layout })
     }
   }, [layout])
 
   return (
-    <StoreContext.Provider value={{ layout, onLayoutChange }}>
+    <StoreContext.Provider
+      value={{ layout, onLayoutChange, removeItemFromLayout }}
+    >
       {children}
     </StoreContext.Provider>
   )
