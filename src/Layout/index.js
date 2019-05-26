@@ -1,17 +1,15 @@
-import React, { useState, Component, useEffect } from 'react'
+import React, { useState } from 'react'
 import './Layout.css'
 import Wrapper from './Wrapper'
 import GridLayout from 'react-grid-layout'
 
-const Layout = ({ width }) => {
+const Layout = ({ size }) => {
   const [layoutState, changeLayout] = useState({
     '1': { x: 0, y: 0, w: 5, h: 5 },
     '2': { x: 0, y: 5, w: 5, h: 5 }
   })
 
-  console.log('--', width)
-
-  if (!width) {
+  if (!size) {
     return null
   }
 
@@ -19,8 +17,8 @@ const Layout = ({ width }) => {
     <GridLayout
       className="layout"
       cols={12}
-      rowHeight={50}
-      width={width}
+      rowHeight={size.height / 12}
+      width={size.width}
       isResizable
       onResizeStop={(layout, oldItem, newItem, placeholder, e, element) => {
         const { i, x, y, w, h } = newItem
