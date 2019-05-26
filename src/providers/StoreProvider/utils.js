@@ -1,6 +1,6 @@
-const storageName = 'rechart-data-cache'
+const storageName = 'rechart-store'
 
-export const getStateFromStorage = () => {
+export const loadStateFromStorage = () => {
   const data = localStorage.getItem(storageName)
   if (data) {
     return JSON.parse(data)

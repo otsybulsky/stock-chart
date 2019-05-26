@@ -1,16 +1,20 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
+import '../node_modules/react-grid-layout/css/styles.css'
+import '../node_modules/react-resizable/css/styles.css'
 import './App.css'
-import DataProvider from './DataProvider'
-import Chart from './Chart'
+import Layout from './components/Layout'
+import StoreProvider from './providers/StoreProvider'
 
-class App extends Component {
-  render() {
-    return (
-      <DataProvider>
-        <Chart />
-      </DataProvider>
-    )
-  }
+const App = ({ size }) => {
+  const [windowSize, setSize] = useState(null)
+
+  useEffect(() => {
+    setSize({ width: window.innerWidth, height: window.innerHeight })
+  }, [])
+
+  return (
+    <StoreProvider>{windowSize && <Layout size={windowSize} />}</StoreProvider>
+  )
 }
 
 export default App

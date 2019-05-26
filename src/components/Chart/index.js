@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-import useDimensions from 'react-use-dimensions'
 import classNames from 'classnames/bind'
 import Chart from './Chart'
 import s from './Chart.m.scss'
@@ -8,6 +7,7 @@ import { last } from 'react-stockcharts/lib/utils'
 import Modal from '../Modal'
 import GetSymbol from './GetSymbol'
 import TopBar from './TopBar'
+import { getData } from 'api'
 
 const cx = classNames.bind(s)
 
@@ -19,7 +19,7 @@ const usePrevious = value => {
   return ref.current
 }
 
-const ChartComponent = ({ getData }) => {
+const ChartComponent = props => {
   const [symbolState, setSymbolState] = useState({
     modalState: false,
     symbol: ''
@@ -28,7 +28,6 @@ const ChartComponent = ({ getData }) => {
   const [loading, setLoading] = useState(false)
   const [config, setConfig] = useState({})
   const [lastVisibleCandle, setLastVisibleCandle] = useState(null)
-  const [ref, { width, height }] = useDimensions()
 
   const updateChart = apiData => {
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
@@ -154,9 +153,15 @@ const ChartComponent = ({ getData }) => {
     })
   }
 
+  const width = parseInt(props.width)
+  const height = parseInt(props.height)
+
+  if (!(width > 0 && height > 0)) {
+    return null
+  }
+
   return (
     <div
-      ref={ref}
       onMouseEnter={changeScroll}
       onMouseLeave={changeScroll}
       className={cx('container')}
@@ -174,13 +179,13 @@ const ChartComponent = ({ getData }) => {
         lastVisibleCandle={lastVisibleCandle}
         onTickerClick={onTickerClick}
       />
-      {!loading && config.data && width && (
+      {!loading && config.data && props.height && (
         <Chart
           className={cx('chart')}
           config={config}
           updateConfig={updateConfig}
-          height={height - 40}
-          width={width}
+          height={height - 40 - 10}
+          width={width - 10}
         />
       )}
     </div>
