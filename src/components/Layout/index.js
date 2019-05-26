@@ -9,6 +9,8 @@ const Layout = ({ size }) => {
     '2': { x: 0, y: 5, w: 5, h: 5 }
   })
 
+  const cols = 36
+
   if (!size) {
     return null
   }
@@ -16,8 +18,8 @@ const Layout = ({ size }) => {
   return (
     <GridLayout
       className="layout"
-      cols={12}
-      rowHeight={size.height / 12}
+      cols={cols}
+      rowHeight={size.height / cols}
       width={size.width}
       // isResizable
       // onResizeStop={(layout, oldItem, newItem, placeholder, e, element) => {

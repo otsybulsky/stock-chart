@@ -3,7 +3,7 @@ import '../node_modules/react-grid-layout/css/styles.css'
 import '../node_modules/react-resizable/css/styles.css'
 import './App.css'
 
-import Layout from './Layout'
+import Layout from './components/Layout'
 
 const App = ({ size }) => {
   const [windowSize, setSize] = useState(null)

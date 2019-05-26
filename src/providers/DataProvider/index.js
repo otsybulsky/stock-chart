@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { fetchData } from '../api'
+import { fetchData } from '../../api'
 import { getStateFromStorage, saveStateToStorage } from './utils'
 import { roundNumber } from 'shared/utils'
 
