@@ -5,6 +5,7 @@ import { StoreContext } from 'shared/context'
 import Chart from '../Chart'
 import s from './Layout.m.scss'
 import classNames from 'classnames/bind'
+import { confirmAlert } from 'react-confirm-alert'
 
 const cx = classNames.bind(s)
 
@@ -14,7 +15,19 @@ const Layout = ({ size }) => {
   )
 
   const onClose = id => {
-    removeItemFromLayout(id)
+    confirmAlert({
+      title: 'Confirm to close',
+      message: 'Are you sure to do this?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => removeItemFromLayout(id)
+        },
+        {
+          label: 'Cancel'
+        }
+      ]
+    })
   }
 
   const cols = 36
