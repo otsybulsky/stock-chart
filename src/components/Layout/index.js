@@ -1,13 +1,12 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
 import './Layout.css'
 import Wrapper from './Wrapper'
 import GridLayout from 'react-grid-layout'
+import { StoreContext } from 'shared/context'
+import Chart from '../Chart'
 
 const Layout = ({ size }) => {
-  const [layoutState, changeLayout] = useState({
-    '1': { x: 0, y: 0, w: 5, h: 5 },
-    '2': { x: 0, y: 5, w: 5, h: 5 }
-  })
+  const { layout, onLayoutChange, currentTime } = useContext(StoreContext)
 
   const cols = 36
 
@@ -21,20 +20,13 @@ const Layout = ({ size }) => {
       cols={cols}
       rowHeight={size.height / cols}
       width={size.width}
-      // isResizable
-      // onResizeStop={(layout, oldItem, newItem, placeholder, e, element) => {
-      //   const { i, x, y, w, h } = newItem
-      //   changeLayout({
-      //     ...layoutState,
-      //     [i]: { x, y, w, h }
-      //   })
-      // }}
+      onLayoutChange={onLayoutChange}
     >
-      {Object.keys(layoutState).map(key => {
-        const cellConfig = layoutState[key]
+      {Object.keys(layout).map(key => {
+        const cellConfig = layout[key]
         return (
           <Wrapper key={key} data-grid={cellConfig}>
-            <div>{key}</div>
+            <Chart />
           </Wrapper>
         )
       })}
