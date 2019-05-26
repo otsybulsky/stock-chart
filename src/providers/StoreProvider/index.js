@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { StoreContext } from 'shared/context'
 import { saveStateToStorage, loadStateFromStorage } from './utils'
+import uuid from 'uuid/v4'
 
 const defaultLayout = [
-  { i: '0', x: 0, y: 0, w: 5, h: 5 },
-  { i: '1', x: 0, y: 5, w: 5, h: 5 }
+  { i: uuid(), x: 0, y: 0, w: 5, h: 5 },
+  { i: uuid(), x: 0, y: 5, w: 5, h: 5 }
 ]
 
 const StoreProvider = ({ children }) => {

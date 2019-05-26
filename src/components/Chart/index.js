@@ -123,10 +123,6 @@ const ChartComponent = props => {
     setConfig({ ...config, ...params })
   }
 
-  if (!config.data) {
-    return <div>Loading...</div>
-  }
-
   function changeScroll() {
     let style = document.body.style.overflow
     document.body.style.overflow = style === 'hidden' ? 'auto' : 'hidden'
@@ -166,27 +162,33 @@ const ChartComponent = props => {
       onMouseLeave={changeScroll}
       className={cx('container')}
     >
-      <Modal
-        noBackground
-        modalState={symbolState.modalState}
-        closeModal={closeModal}
-      >
-        <GetSymbol closeModal={closeModal} />
-      </Modal>
-      <TopBar
-        symbol={symbolState.symbol}
-        loading={loading}
-        lastVisibleCandle={lastVisibleCandle}
-        onTickerClick={onTickerClick}
-      />
-      {!loading && config.data && props.height && (
-        <Chart
-          className={cx('chart')}
-          config={config}
-          updateConfig={updateConfig}
-          height={height - 40 - 10}
-          width={width - 10}
-        />
+      {!config.data ? (
+        <div>Loading...</div>
+      ) : (
+        <>
+          <Modal
+            noBackground
+            modalState={symbolState.modalState}
+            closeModal={closeModal}
+          >
+            <GetSymbol closeModal={closeModal} />
+          </Modal>
+          <TopBar
+            symbol={symbolState.symbol}
+            loading={loading}
+            lastVisibleCandle={lastVisibleCandle}
+            onTickerClick={onTickerClick}
+          />
+          {!loading && config.data && props.height && (
+            <Chart
+              className={cx('chart')}
+              config={config}
+              updateConfig={updateConfig}
+              height={height - 40 - 10}
+              width={width - 10}
+            />
+          )}
+        </>
       )}
     </div>
   )

@@ -21,10 +21,9 @@ const Layout = ({ size }) => {
       width={size.width}
       onLayoutChange={onLayoutChange}
     >
-      {Object.keys(layout).map(key => {
-        const cellConfig = layout[key]
+      {layout.map(config => {
         return (
-          <Wrapper key={key} data-grid={cellConfig}>
+          <Wrapper key={config.i} data-grid={config}>
             <Chart />
           </Wrapper>
         )
