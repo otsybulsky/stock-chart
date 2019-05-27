@@ -1,1 +1,7 @@
 @import 'node_modules/bulmaswatch/default/bulmaswatch';
+
+.button.is-rounded {
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+}

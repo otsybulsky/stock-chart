@@ -4,13 +4,14 @@ import { saveStateToStorage, loadStateFromStorage } from './utils'
 import uuid from 'uuid/v4'
 
 const defaultLayout = [
-  { i: uuid(), x: 0, y: 0, w: 5, h: 5 },
-  { i: uuid(), x: 0, y: 5, w: 5, h: 5 }
+  { i: uuid(), x: 0, y: 0, w: 4, h: 4 },
+  { i: uuid(), x: 0, y: 4, w: 4, h: 4 }
 ]
 
 const StoreProvider = ({ children }) => {
   const [layout, setLayout] = useState([])
   const [isStart, setIsStart] = useState(true)
+  const cols = 12
 
   const onLayoutChange = newLayout => {
     setLayout(newLayout)
@@ -18,6 +19,19 @@ const StoreProvider = ({ children }) => {
 
   const removeItemFromLayout = id => {
     setLayout(layout.filter(item => item.i !== id))
+  }
+
+  const addItemToLayout = () => {
+    setLayout([
+      ...layout,
+      {
+        i: uuid(),
+        x: (layout.length * 2) % cols,
+        y: Infinity, // puts it at the bottom
+        w: 2,
+        h: 2
+      }
+    ])
   }
 
   useEffect(() => {
@@ -38,7 +52,13 @@ const StoreProvider = ({ children }) => {
 
   return (
     <StoreContext.Provider
-      value={{ layout, onLayoutChange, removeItemFromLayout }}
+      value={{
+        layout,
+        onLayoutChange,
+        addItemToLayout,
+        removeItemFromLayout,
+        cols
+      }}
     >
       {children}
     </StoreContext.Provider>
