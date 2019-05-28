@@ -2,11 +2,21 @@
   border: 1px solid lightgray;
   width: 100%;
   height: 100%;
-}
+  display: flex;
+  flex-direction: column;
 
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 1.25rem;
+    line-height: normal;
+    border: 1px solid lightgray;
 
-.closeButton {
-  position: absolute;
-  top: 2px;
-  right: 2px;
+    background-color: lightgray;
+  }
+
+  .content {
+    flex: 1
+  }
 }

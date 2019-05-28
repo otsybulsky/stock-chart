@@ -29,11 +29,20 @@ const Container = ({ containerId, width, height }) => {
 
   return (
     <div className={cx('container')}>
-      <div
-        className={cx('delete is-small', 'closeButton')}
-        onClick={() => onClose(containerId)}
-      />
-      {containerId}
+      <div className={s.navbar}>
+        <div className={s.leftPart} />
+
+        <div className={s.rightPart}>
+          <div
+            className={cx('delete is-small')}
+            onClick={() => onClose(containerId)}
+          />
+        </div>
+      </div>
+
+      <div className={s.content}>
+        <Chart {...{ width, height: height - 20 }} />
+      </div>
     </div>
   )
 }

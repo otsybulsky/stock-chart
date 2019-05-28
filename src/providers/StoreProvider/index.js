@@ -28,8 +28,8 @@ const StoreProvider = ({ children }) => {
         i: uuid(),
         x: (layout.length * 2) % cols,
         y: Infinity, // puts it at the bottom
-        w: 2,
-        h: 2
+        w: 8,
+        h: 4
       }
     ])
   }

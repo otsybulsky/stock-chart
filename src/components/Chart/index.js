@@ -149,8 +149,7 @@ const ChartComponent = props => {
     })
   }
 
-  const width = parseInt(props.width)
-  const height = parseInt(props.height)
+  const { width, height } = props
 
   if (!(width > 0 && height > 0)) {
     return null

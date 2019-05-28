@@ -25,8 +25,8 @@ const Layout = ({ size }) => {
         className={cx('button is-success is-rounded', 'fixed')}
         onClick={onAdd}
       >
-        <span class="icon">
-          <i class="fas fa-plus" />
+        <span className="icon">
+          <i className="fas fa-plus" />
         </span>
       </div>
       <GridLayout
