@@ -2,40 +2,18 @@ import React, { useContext } from 'react'
 import Wrapper from './Wrapper'
 import GridLayout from 'react-grid-layout'
 import { StoreContext } from 'shared/context'
-import Chart from '../Chart'
 import s from './Layout.m.scss'
 import classNames from 'classnames/bind'
-import { confirmAlert } from 'react-confirm-alert'
+import Container from './Container'
 
 const cx = classNames.bind(s)
 
 const Layout = ({ size }) => {
-  const {
-    layout,
-    onLayoutChange,
-    addItemToLayout,
-    removeItemFromLayout,
-    cols
-  } = useContext(StoreContext)
+  const { layout, onLayoutChange, addItemToLayout, cols } = useContext(
+    StoreContext
+  )
 
   const onAdd = () => addItemToLayout()
-
-  const onClose = id => {
-    removeItemFromLayout(id)
-    // confirmAlert({
-    //   title: 'Confirm to close',
-    //   message: 'Are you sure to do this?',
-    //   buttons: [
-    //     {
-    //       label: 'Yes',
-    //       onClick: () => removeItemFromLayout(id)
-    //     },
-    //     {
-    //       label: 'Cancel'
-    //     }
-    //   ]
-    // })
-  }
 
   if (!size) {
     return null
@@ -61,11 +39,7 @@ const Layout = ({ size }) => {
         {layout.map(config => {
           return (
             <Wrapper key={config.i} data-grid={config}>
-              <div
-                className={cx('delete is-small', 'closeButton')}
-                onClick={() => onClose(config.i)}
-              />
-              <Chart />
+              <Container containerId={config.i} />
             </Wrapper>
           )
         })}
