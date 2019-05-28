@@ -32,6 +32,7 @@ const Layout = ({ size }) => {
       <GridLayout
         className="layout"
         cols={cols}
+        margin={[3, 3]}
         rowHeight={size.height / cols}
         width={size.width}
         onLayoutChange={onLayoutChange}

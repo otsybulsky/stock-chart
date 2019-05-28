@@ -11,9 +11,11 @@
     justify-content: space-between;
     height: 1.25rem;
     line-height: normal;
-    border: 1px solid lightgray;
-
     background-color: lightgray;
+
+    &:hover {
+      background: linear-gradient(gray, lightgray)
+    }
   }
 
   .content {
