@@ -9,9 +9,13 @@ import Container from './Container'
 const cx = classNames.bind(s)
 
 const Layout = ({ size }) => {
-  const { layout, onLayoutChange, addItemToLayout, cols } = useContext(
-    StoreContext
-  )
+  const {
+    layout,
+    onLayoutChange,
+    addItemToLayout,
+    cols,
+    fullscreen
+  } = useContext(StoreContext)
 
   const onAdd = () => addItemToLayout()
 
@@ -21,14 +25,16 @@ const Layout = ({ size }) => {
 
   return (
     <>
-      <div
-        className={cx('button is-success is-rounded', 'fixed')}
-        onClick={onAdd}
-      >
-        <span className="icon">
-          <i className="fas fa-plus" />
-        </span>
-      </div>
+      {!fullscreen && (
+        <div
+          className={cx('button is-success is-rounded', 'fixed')}
+          onClick={onAdd}
+        >
+          <span className="icon">
+            <i className="fas fa-plus" />
+          </span>
+        </div>
+      )}
       <GridLayout
         className="layout"
         cols={cols}

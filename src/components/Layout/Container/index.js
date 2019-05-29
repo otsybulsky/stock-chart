@@ -8,7 +8,12 @@ import Chart from 'components/Chart'
 const cx = classNames.bind(s)
 
 const Container = ({ containerId, width, height }) => {
-  const { removeItemFromLayout } = useContext(StoreContext)
+  const {
+    removeItemFromLayout,
+    fullscreen,
+    onFullscreenContainer,
+    onRestoreLayout
+  } = useContext(StoreContext)
 
   const onClose = id => {
     removeItemFromLayout(id)
@@ -33,10 +38,34 @@ const Container = ({ containerId, width, height }) => {
         <div className={s.leftPart} />
 
         <div className={s.rightPart}>
-          <div
-            className={cx('delete is-small')}
-            onClick={() => onClose(containerId)}
-          />
+          {fullscreen && (
+            <div
+              className="button is-small"
+              onClick={() => onRestoreLayout(containerId)}
+            >
+              <span className="icon">
+                <i className="fas fa-compress" />
+              </span>
+            </div>
+          )}
+          {!fullscreen && (
+            <div
+              className="button is-small"
+              onClick={() => {
+                onFullscreenContainer(containerId)
+              }}
+            >
+              <span className="icon">
+                <i className="fas fa-expand" />
+              </span>
+            </div>
+          )}
+          {!fullscreen && (
+            <div
+              className={cx('delete is-small')}
+              onClick={() => onClose(containerId)}
+            />
+          )}
         </div>
       </div>
 

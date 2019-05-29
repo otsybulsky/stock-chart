@@ -14,7 +14,9 @@ const App = ({ size }) => {
   }, [])
 
   return (
-    <StoreProvider>{windowSize && <Layout size={windowSize} />}</StoreProvider>
+    <StoreProvider windowSize={windowSize}>
+      {windowSize && <Layout size={windowSize} />}
+    </StoreProvider>
   )
 }
 
