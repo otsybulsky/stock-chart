@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { StoreContext } from 'shared/context'
 import { saveStateToStorage, loadStateFromStorage } from './utils'
 import uuid from 'uuid/v4'
-import _ from 'lodash'
 
 const defaultLayout = [
   { i: uuid(), x: 0, y: 0, w: 4, h: 4, moved: false, static: false },
@@ -10,12 +9,13 @@ const defaultLayout = [
 ]
 
 const StoreProvider = ({ windowSize, children }) => {
-  const [layout, setLayout] = useState([])
   const [state, setState] = useState({
     fullscreen: false,
     containerId: null,
+    layout: [],
     backupLayout: []
   })
+
   const [isStart, setIsStart] = useState(true)
   const cols = 12
 
@@ -24,18 +24,18 @@ const StoreProvider = ({ windowSize, children }) => {
       ...state,
       containerId,
       fullscreen: true,
-      backupLayout: layout.map(item => ({ i: item.i, ...item }))
+      backupLayout: state.layout.map(item => ({ i: item.i, ...item })),
+      layout: [] //clear layout and useEffect state.fulscreen
     })
-    setLayout([])
   }
 
   const onRestoreLayout = () => {
     setState({
       ...state,
       fullscreen: false,
-      containerId: null
+      containerId: null,
+      layout: [] //clear layout and useEffect state.fulscreen
     })
-    setLayout([])
   }
 
   useEffect(() => {
@@ -49,59 +49,73 @@ const StoreProvider = ({ windowSize, children }) => {
         static: true
       }
 
-      setLayout([container])
+      setState({
+        ...state,
+        layout: [container]
+      })
     }
 
     if (!state.fullscreen && !state.containerId) {
-      setLayout(state.backupLayout)
+      setState({
+        ...state,
+        layout: state.backupLayout
+      })
     }
   }, [state.fullscreen])
 
   const onLayoutChange = newLayout => {
-    setLayout(newLayout)
+    setState({
+      ...state,
+      layout: newLayout
+    })
   }
 
   const removeItemFromLayout = id => {
-    setLayout(layout.filter(item => item.i !== id))
+    setState({
+      ...state,
+      layout: state.layout.filter(item => item.i !== id)
+    })
   }
 
   const addItemToLayout = () => {
-    setLayout([
-      ...layout,
-      {
-        i: uuid(),
-        x: 0,
-        y: Infinity, // puts it at the bottom
-        w: 4,
-        h: 4
-      }
-    ])
+    setState({
+      ...state,
+      layout: [
+        ...state.layout,
+        {
+          i: uuid(),
+          x: 0,
+          y: Infinity, // puts it at the bottom
+          w: 4,
+          h: 4
+        }
+      ]
+    })
   }
 
   useEffect(() => {
     const restored = loadStateFromStorage()
     if (restored && restored.config) {
-      setLayout(restored.config.layout)
       setState({ ...state, ...restored.config.state })
     } else {
-      setLayout(defaultLayout)
+      setState({ ...state, layout: defaultLayout })
     }
     setIsStart(false)
-  }, [])
+  }, []) //componentDidMount
 
   useEffect(() => {
     if (!isStart) {
       //reconfigure for autoupdate after restore
-      const lay = layout.map(item => ({ i: item.i, ...item }))
+      const _lay = state.layout.map(item => ({ i: item.i, ...item }))
 
-      saveStateToStorage({ config: { state, layout: lay } })
+      saveStateToStorage({ config: { state: { ...state, layout: _lay } } })
     }
-  }, [state, layout])
+  }, [state])
 
   return (
     <StoreContext.Provider
       value={{
-        layout,
+        layout: state.layout,
         onLayoutChange,
         addItemToLayout,
         removeItemFromLayout,
