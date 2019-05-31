@@ -39,21 +39,28 @@ const ChartComponent = ({ containerId, ...props }) => {
     const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
       apiData
     )
+
+    const { xVisibleCount } = getContainerConfig(containerId)
+
     const xExtents = [
-      xAccessor(last(data)),
-      xAccessor(data[data.length - Math.min(data.length, 400)])
+      xAccessor(
+        data[data.length - Math.min(data.length, xVisibleCount || 400)]
+      ),
+      xAccessor(last(data))
     ]
-    setConfig({
-      chartActive: true,
-      data,
-      xScale,
-      xAccessor,
-      displayXAccessor,
-      xExtents
-    })
-    setContainerConfig({
-      containerId,
-      symbol: symbolState.symbol
+    setConfig(config => {
+      const newConfig = {
+        ...config,
+        chartActive: true,
+        data,
+        xScale,
+        xAccessor,
+        displayXAccessor,
+        xExtents
+      }
+      saveConfig(newConfig)
+
+      return newConfig
     })
   }
 
@@ -128,7 +135,28 @@ const ChartComponent = ({ containerId, ...props }) => {
   }
 
   const updateConfig = params => {
-    setConfig({ ...config, ...params })
+    setConfig(config => {
+      const newConfig = { ...config, ...params }
+      saveConfig(config)
+      return newConfig
+    })
+  }
+
+  const saveConfig = config => {
+    const { symbol } = symbolState
+    let currentConfig = {
+      containerId,
+      symbol: symbolState.symbol
+    }
+
+    if (config.xExtents && config.xExtents.length === 2) {
+      currentConfig = {
+        ...currentConfig,
+        xVisibleCount: ~~config.xExtents[1] - ~~config.xExtents[0] + 1
+      }
+    }
+
+    setContainerConfig(currentConfig)
   }
 
   function changeScroll() {

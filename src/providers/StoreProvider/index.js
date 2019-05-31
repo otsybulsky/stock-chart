@@ -3,6 +3,7 @@ import { StoreContext } from 'shared/context'
 import { saveStateToStorage, loadStateFromStorage } from './utils'
 import uuid from 'uuid/v4'
 import { containerType } from 'shared/types'
+import debounce from 'debounce'
 
 const defaultLayout = [
   { i: uuid(), x: 0, y: 0, w: 4, h: 4, moved: false, static: false },
@@ -130,7 +131,12 @@ const StoreProvider = ({ windowSize, children }) => {
       setState(state => ({ ...state, containerStore, layout: defaultLayout }))
     }
     setIsStart(false)
-  }, []) //componentDidMount
+
+    return () => {
+      //clear debounced
+      setContainerConfig.clear()
+    }
+  }, []) //componentDidMount, componentWillUnmount
 
   useEffect(() => {
     if (!isStart) {
@@ -139,14 +145,29 @@ const StoreProvider = ({ windowSize, children }) => {
   }, [state])
 
   const getContainerConfig = containerId => state.containerStore[containerId]
-  const setContainerConfig = ({ containerId, ...containerConfig }) =>
-    setState(state => ({
-      ...state,
-      containerStore: {
-        ...state.containerStore,
-        [containerId]: { containerId, ...containerConfig }
-      }
-    }))
+  const setContainerConfig = debounce(
+    ({ containerId, ...containerConfig }) =>
+      setState(state => {
+        const currentConfig = state.containerStore[containerId]
+        const newConfig = {
+          ...currentConfig,
+          ...containerConfig
+        }
+
+        if (JSON.stringify(currentConfig) !== JSON.stringify(newConfig)) {
+          return {
+            ...state,
+            containerStore: {
+              ...state.containerStore,
+              [containerId]: newConfig
+            }
+          }
+        } else {
+          return state
+        }
+      }),
+    50
+  )
 
   return (
     <StoreContext.Provider
