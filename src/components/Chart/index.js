@@ -32,7 +32,7 @@ const ChartComponent = ({ containerId, ...props }) => {
   const [config, setConfig] = useState({})
   const [lastVisibleCandle, setLastVisibleCandle] = useState(null)
 
-  const updateChart = apiData => {
+  const updateChart = (apiData, chartActive = false) => {
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
       d => d.date
     )
@@ -51,7 +51,7 @@ const ChartComponent = ({ containerId, ...props }) => {
     setConfig(config => {
       const newConfig = {
         ...config,
-        chartActive: false,
+        chartActive,
         data,
         xScale,
         xAccessor,
@@ -95,7 +95,7 @@ const ChartComponent = ({ containerId, ...props }) => {
       setLoading(true)
       getData(symbolState.symbol).then(({ error, chart }) => {
         if (!error) {
-          updateChart(chart)
+          updateChart(chart, previousSymbol && true)
         } else {
           console.log('--', symbolState.symbol, error)
           setSymbolState({
