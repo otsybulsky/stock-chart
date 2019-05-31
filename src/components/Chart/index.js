@@ -20,8 +20,8 @@ const usePrevious = value => {
   return ref.current
 }
 
-const ChartComponent = props => {
-  const { getContainerConfig } = useContext(StoreContext)
+const ChartComponent = ({ containerId, ...props }) => {
+  const { getContainerConfig, setContainerConfig } = useContext(StoreContext)
 
   const [symbolState, setSymbolState] = useState({
     modalState: false,
@@ -51,10 +51,14 @@ const ChartComponent = props => {
       displayXAccessor,
       xExtents
     })
+    setContainerConfig({
+      containerId,
+      symbol: symbolState.symbol
+    })
   }
 
   useEffect(() => {
-    const { symbol } = getContainerConfig(props.containerId)
+    const { symbol } = getContainerConfig(containerId)
     setSymbolState({
       ...symbolState,
       symbol
@@ -153,7 +157,7 @@ const ChartComponent = props => {
     })
   }
 
-  const { containerId, width, height } = props
+  const { width, height } = props
 
   if (!(width > 0 && height > 0)) {
     return null
