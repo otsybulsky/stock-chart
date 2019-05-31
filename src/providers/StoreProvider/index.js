@@ -73,20 +73,23 @@ const StoreProvider = ({ windowSize, children }) => {
   }
 
   const removeItemFromLayout = id => {
-    setState(state => ({
-      ...state,
-      layout: state.layout.filter(item => item.i !== id)
-    }))
+    setState(state => {
+      const containerStore = { ...state.containerStore }
+      delete containerStore[id]
+
+      return {
+        ...state,
+        containerStore,
+        layout: state.layout.filter(item => item.i !== id)
+      }
+    })
   }
 
   const initContainerStore = containerId => {
     return {
       containerId,
-      data: {},
-      config: {
-        type: containerType.Chart,
-        symbol: 'SPY'
-      }
+      type: containerType.Chart,
+      symbol: 'SPY'
     }
   }
 
