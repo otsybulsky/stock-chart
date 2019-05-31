@@ -51,7 +51,7 @@ const ChartComponent = ({ containerId, ...props }) => {
     setConfig(config => {
       const newConfig = {
         ...config,
-        chartActive: true,
+        chartActive: false,
         data,
         xScale,
         xAccessor,
