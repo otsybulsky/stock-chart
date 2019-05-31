@@ -138,6 +138,8 @@ const StoreProvider = ({ windowSize, children }) => {
     }
   }, [state])
 
+  const getContainerConfig = containerId => state.containerStore[containerId]
+
   return (
     <StoreContext.Provider
       value={{
@@ -148,7 +150,8 @@ const StoreProvider = ({ windowSize, children }) => {
         cols,
         fullscreen: state.fullscreen,
         onFullscreenContainer,
-        onRestoreLayout
+        onRestoreLayout,
+        getContainerConfig
       }}
     >
       {children}

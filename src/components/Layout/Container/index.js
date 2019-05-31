@@ -70,7 +70,7 @@ const Container = ({ containerId, width, height }) => {
       </div>
 
       <div className={s.content}>
-        <Chart {...{ width, height: height - 20 }} />
+        <Chart {...{ containerId, width, height: height - 20 }} />
       </div>
     </div>
   )

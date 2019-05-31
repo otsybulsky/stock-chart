@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import classNames from 'classnames/bind'
 import Chart from './Chart'
 import s from './Chart.m.scss'
@@ -8,6 +8,7 @@ import Modal from '../Modal'
 import GetSymbol from './GetSymbol'
 import TopBar from './TopBar'
 import { getData } from 'api'
+import { StoreContext } from 'shared/context'
 
 const cx = classNames.bind(s)
 
@@ -20,6 +21,8 @@ const usePrevious = value => {
 }
 
 const ChartComponent = props => {
+  const { getContainerConfig } = useContext(StoreContext)
+
   const [symbolState, setSymbolState] = useState({
     modalState: false,
     symbol: ''
@@ -51,9 +54,10 @@ const ChartComponent = props => {
   }
 
   useEffect(() => {
+    const { symbol } = getContainerConfig(props.containerId)
     setSymbolState({
       ...symbolState,
-      symbol: 'SPY'
+      symbol
     })
   }, [])
 
@@ -149,7 +153,7 @@ const ChartComponent = props => {
     })
   }
 
-  const { width, height } = props
+  const { containerId, width, height } = props
 
   if (!(width > 0 && height > 0)) {
     return null
@@ -162,7 +166,11 @@ const ChartComponent = props => {
       className={cx('container')}
     >
       {!config.data ? (
-        <div>Loading...</div>
+        <>
+          <div>Loading...</div>
+          <span>{containerId}</span>
+          <span>{symbolState.symbol}</span>
+        </>
       ) : (
         <>
           <Modal
