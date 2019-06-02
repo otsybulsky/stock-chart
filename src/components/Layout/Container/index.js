@@ -1,9 +1,10 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import s from './Container.m.scss'
 import classNames from 'classnames/bind'
 import { StoreContext } from 'shared/context'
 import { confirmAlert } from 'react-confirm-alert'
 import Chart from 'components/Chart'
+import DropdownSelect from 'shared/components/DropdownSelect'
 
 const cx = classNames.bind(s)
 
@@ -12,7 +13,10 @@ const Container = ({ containerId, width, height }) => {
     removeItemFromLayout,
     fullscreen,
     onFullscreenContainer,
-    onRestoreLayout
+    onRestoreLayout,
+    getGroups,
+    setContainerGroup,
+    containerStore
   } = useContext(StoreContext)
 
   const onClose = id => {
@@ -32,10 +36,20 @@ const Container = ({ containerId, width, height }) => {
     // })
   }
 
+  const onGroupChange = groupId => setContainerGroup(containerId, groupId)
+
+  const groups = getGroups()
+
   return (
     <div className={cx('container')}>
       <div className={s.navbar}>
-        <div className={s.leftPart} />
+        <div className={s.leftPart}>
+          <DropdownSelect
+            value={containerStore[containerId].groupId}
+            items={groups}
+            onChange={onGroupChange}
+          />
+        </div>
 
         <div className={s.rightPart}>
           {fullscreen && (

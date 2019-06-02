@@ -6,8 +6,17 @@ import { containerType } from 'shared/types'
 import debounce from 'debounce'
 
 const defaultLayout = [
-  { i: uuid(), x: 0, y: 0, w: 4, h: 4, moved: false, static: false },
-  { i: uuid(), x: 0, y: 4, w: 4, h: 4, moved: false, static: false }
+  { i: uuid(), x: 0, y: 0, w: 8, h: 4 },
+  { i: uuid(), x: 0, y: 4, w: 8, h: 4 }
+]
+
+const ungroupId = '0'
+
+const groups = [
+  { id: ungroupId, name: 'Ungroup' },
+  { id: uuid(), name: 'Group 1' },
+  { id: uuid(), name: 'Group 2' },
+  { id: uuid(), name: 'Group 3' }
 ]
 
 const StoreProvider = ({ windowSize, children }) => {
@@ -16,7 +25,9 @@ const StoreProvider = ({ windowSize, children }) => {
     containerId: null,
     layout: [],
     backupLayout: [],
-    containerStore: {}
+    containerStore: {},
+    groups: [],
+    groupStore: {}
   })
 
   const [isStart, setIsStart] = useState(true)
@@ -90,7 +101,8 @@ const StoreProvider = ({ windowSize, children }) => {
     return {
       containerId,
       type: containerType.Chart,
-      symbol: 'SPY'
+      symbol: 'SPY',
+      groupId: null
     }
   }
 
@@ -128,7 +140,12 @@ const StoreProvider = ({ windowSize, children }) => {
         }
       })
 
-      setState(state => ({ ...state, containerStore, layout: defaultLayout }))
+      setState(state => ({
+        ...state,
+        containerStore,
+        layout: defaultLayout,
+        groups
+      }))
     }
     setIsStart(false)
 
@@ -169,10 +186,118 @@ const StoreProvider = ({ windowSize, children }) => {
     50
   )
 
+  const getGroups = () => state.groups
+
+  //убрать дублювання кода по установці група - контейнер і символ - група
+
+  const setContainerGroup = (containerId, groupId) => {
+    if (groupId === ungroupId) {
+      groupId = null
+    }
+    setState(state => {
+      let changes = {}
+
+      const containerConfig = {
+        ...state.containerStore[containerId],
+        groupId
+      }
+
+      const { symbol } = containerConfig
+
+      changes = {
+        ...changes,
+        containerStore: {
+          ...state.containerStore,
+          [containerId]: containerConfig
+        }
+      }
+
+      if (groupId) {
+        const groupStore = state.groupStore[groupId]
+
+        const groupConfig = {
+          ...state.groupStore[groupId],
+          symbol
+        }
+
+        const containerStore = { ...state.containerStore }
+        Object.keys(containerStore).forEach(cId => {
+          const config = containerStore[cId]
+          if (config.groupId === groupId) {
+            if (
+              config.type === containerType.Chart &&
+              config.symbol !== symbol
+            ) {
+              config.symbol = symbol
+            }
+          }
+        })
+
+        changes = {
+          ...changes,
+          groupStore: {
+            ...state.groupStore,
+            [groupId]: groupConfig
+          },
+          containerStore
+        }
+      }
+
+      changes = {
+        ...changes,
+        containerStore: {
+          ...state.containerStore,
+          [containerId]: containerConfig
+        }
+      }
+
+      return {
+        ...state,
+        ...changes
+      }
+    })
+  }
+
+  const setGroupSymbol = (containerId, symbol) => {
+    const { groupId } = state.containerStore[containerId]
+
+    if (groupId) {
+      setState(state => {
+        const groupConfig = {
+          ...state.groupStore[groupId],
+          symbol
+        }
+
+        const containerStore = { ...state.containerStore }
+        Object.keys(containerStore).forEach(cId => {
+          const config = containerStore[cId]
+          if (config.groupId === groupId) {
+            if (
+              config.type === containerType.Chart &&
+              config.symbol !== symbol
+            ) {
+              config.symbol = symbol
+            }
+          }
+        })
+
+        return {
+          ...state,
+          groupStore: {
+            ...state.groupStore,
+            [groupId]: groupConfig
+          },
+          containerStore
+        }
+      })
+    }
+  }
+
   return (
     <StoreContext.Provider
       value={{
-        layout: [...state.layout],
+        layout: state.layout,
+        containerStore: state.containerStore,
         onLayoutChange,
         addItemToLayout,
         removeItemFromLayout,
@@ -181,7 +306,10 @@ const StoreProvider = ({ windowSize, children }) => {
         onFullscreenContainer,
         onRestoreLayout,
         getContainerConfig,
-        setContainerConfig
+        setContainerConfig,
+        getGroups,
+        setContainerGroup,
+        setGroupSymbol
       }}
     >
       {children}

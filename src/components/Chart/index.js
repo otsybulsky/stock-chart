@@ -21,18 +21,37 @@ const usePrevious = value => {
 }
 
 const ChartComponent = ({ containerId, ...props }) => {
-  const { getContainerConfig, setContainerConfig } = useContext(StoreContext)
+  const {
+    containerStore,
+    getContainerConfig,
+    setContainerConfig,
+    setGroupSymbol
+  } = useContext(StoreContext)
 
   const [symbolState, setSymbolState] = useState({
     modalState: false,
-    symbol: ''
+    symbol: '',
+    manualEdit: false
   })
   const previousSymbol = usePrevious(symbolState.symbol)
   const [loading, setLoading] = useState(false)
   const [config, setConfig] = useState({})
   const [lastVisibleCandle, setLastVisibleCandle] = useState(null)
 
-  const updateChart = (apiData, chartActive = false) => {
+  const { groupId, symbol: containerSymbol } = getContainerConfig(containerId)
+
+  if (
+    groupId &&
+    containerSymbol !== symbolState.symbol &&
+    !symbolState.manualEdit
+  ) {
+    setSymbolState({
+      ...symbolState,
+      symbol: containerSymbol
+    })
+  }
+
+  const updateChart = apiData => {
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
       d => d.date
     )
@@ -48,7 +67,19 @@ const ChartComponent = ({ containerId, ...props }) => {
       ),
       xAccessor(last(data))
     ]
+
     setConfig(config => {
+      let chartActive = false
+      if (symbolState.manualEdit) {
+        chartActive = true
+        setSymbolState(state => {
+          setGroupSymbol(containerId, state.symbol)
+          return {
+            ...state,
+            manualEdit: false
+          }
+        })
+      }
       const newConfig = {
         ...config,
         chartActive,
@@ -95,12 +126,13 @@ const ChartComponent = ({ containerId, ...props }) => {
       setLoading(true)
       getData(symbolState.symbol).then(({ error, chart }) => {
         if (!error) {
-          updateChart(chart, previousSymbol && true)
+          updateChart(chart)
         } else {
           console.log('--', symbolState.symbol, error)
           setSymbolState({
             ...symbolState,
-            symbol: previousSymbol
+            symbol: previousSymbol,
+            manualEdit: false
           })
         }
         setLoading(false)
@@ -114,7 +146,8 @@ const ChartComponent = ({ containerId, ...props }) => {
     if (e.code.match(letters)) {
       setSymbolState({
         ...symbolState,
-        modalState: true
+        modalState: true,
+        manualEdit: true
       })
     }
 
@@ -174,7 +207,7 @@ const ChartComponent = ({ containerId, ...props }) => {
         modalState: false
       })
     } else {
-      setSymbolState({ ...symbolState, modalState: false })
+      setSymbolState({ ...symbolState, modalState: false, manualEdit: false })
     }
   }
 
