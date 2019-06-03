@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import s from './DropdownSelect.m.scss'
 import { string } from 'postcss-selector-parser'
 
@@ -11,6 +11,20 @@ const DropdownSelect = ({ items, value, onChange }) => {
   }
 
   const [isActive, setControlActive] = useState(false)
+
+  useEffect(() => {
+    if (isActive) {
+      document.addEventListener('keydown', onKeyDown)
+    } else {
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [isActive])
+
+  const onKeyDown = e => {
+    if (e.keyCode === 27) {
+      setControlActive(false)
+    }
+  }
 
   const onSelect = selectedId => {
     setControlActive(false)
