@@ -31,7 +31,7 @@ const DropdownSelect = ({ items, value, onChange }) => {
   }
 
   const handleClick = e => {
-    if (node.current.contains(e.target)) {
+    if (node.current && node.current.contains(e.target)) {
       // inside click
       return
     }
