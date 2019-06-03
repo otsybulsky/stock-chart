@@ -21,17 +21,14 @@ const DropdownSelect = ({ items, value, onChange }) => {
 
   return (
     <div className={`dropdown ${isActive ? 'is-active' : ''}`}>
-      <div className="dropdown-trigger">
-        <button
-          className="button"
-          aria-haspopup="true"
-          aria-controls="group-menu"
-          onClick={() => setControlActive(!isActive)}
-        >
-          <span>{valueTitle}</span>
-          <span className="icon is-small" />
+      <div
+        className={`${s.custom} dropdown-trigger`}
+        onClick={() => setControlActive(!isActive)}
+      >
+        <span>{valueTitle}</span>
+        <span className="icon is-small">
           <i className="fas fa-angle-down" aria-hidden="true" />
-        </button>
+        </span>
       </div>
       <div className="dropdown-menu" id="group-menu" role="menu">
         <div className="dropdown-content">

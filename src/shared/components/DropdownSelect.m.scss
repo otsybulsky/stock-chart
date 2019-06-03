@@ -1,3 +1,11 @@
-.dropdown-item {
-  color: red;
+.custom {
+  &:global(.dropdown-trigger) {
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  &:global(.dropdown-trigger):hover {
+    color: black;
+  }
 }
