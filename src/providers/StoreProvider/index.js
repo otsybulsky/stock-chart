@@ -189,6 +189,7 @@ const StoreProvider = ({ windowSize, children }) => {
   const getGroups = () => state.groups
 
   //убрать дублювання кода по установці група - контейнер і символ - група
+  //можливо group store вже не потрібно ???????
 
   const setContainerGroup = (containerId, groupId) => {
     if (groupId === ungroupId) {
@@ -197,49 +198,38 @@ const StoreProvider = ({ windowSize, children }) => {
     setState(state => {
       let changes = {}
 
-      const containerConfig = {
+      let containerConfig = {
         ...state.containerStore[containerId],
         groupId
       }
 
-      const { symbol } = containerConfig
-
-      changes = {
-        ...changes,
-        containerStore: {
-          ...state.containerStore,
-          [containerId]: containerConfig
-        }
-      }
-
       if (groupId) {
-        const groupStore = state.groupStore[groupId]
-
-        const groupConfig = {
-          ...state.groupStore[groupId],
-          symbol
-        }
-
         const containerStore = { ...state.containerStore }
-        Object.keys(containerStore).forEach(cId => {
-          const config = containerStore[cId]
-          if (config.groupId === groupId) {
-            if (
-              config.type === containerType.Chart &&
-              config.symbol !== symbol
-            ) {
-              config.symbol = symbol
+
+        let symbol = containerConfig.symbol
+
+        const groupedContainers = Object.values(containerStore).filter(
+          item => item.type === containerType.Chart && item.groupId === groupId
+        )
+
+        if (groupedContainers.length) {
+          symbol = groupedContainers[0].symbol
+          containerConfig = {
+            ...containerConfig,
+            symbol
+          }
+        } else {
+          const groupConfig = {
+            ...state.groupStore[groupId],
+            symbol
+          }
+          changes = {
+            ...changes,
+            groupStore: {
+              ...state.groupStore,
+              [groupId]: groupConfig
             }
           }
-        })
-
-        changes = {
-          ...changes,
-          groupStore: {
-            ...state.groupStore,
-            [groupId]: groupConfig
-          },
-          containerStore
         }
       }
 
