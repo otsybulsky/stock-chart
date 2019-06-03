@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import s from './DropdownSelect.m.scss'
 import { string } from 'postcss-selector-parser'
 
 const DropdownSelect = ({ items, value, onChange }) => {
+  const node = useRef()
+
   let valueTitle = items[0].name
   if (value) {
     valueTitle = items.filter(item => item.id === value)[0].name
@@ -15,8 +17,10 @@ const DropdownSelect = ({ items, value, onChange }) => {
   useEffect(() => {
     if (isActive) {
       document.addEventListener('keydown', onKeyDown)
+      document.addEventListener('mousedown', handleClick)
     } else {
       document.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('mousedown', handleClick)
     }
   }, [isActive])
 
@@ -24,6 +28,15 @@ const DropdownSelect = ({ items, value, onChange }) => {
     if (e.keyCode === 27) {
       setControlActive(false)
     }
+  }
+
+  const handleClick = e => {
+    if (node.current.contains(e.target)) {
+      // inside click
+      return
+    }
+    // outside click
+    setControlActive(false)
   }
 
   const onSelect = selectedId => {
@@ -34,7 +47,7 @@ const DropdownSelect = ({ items, value, onChange }) => {
   }
 
   return (
-    <div className={`dropdown ${isActive ? 'is-active' : ''}`}>
+    <div ref={node} className={`dropdown ${isActive ? 'is-active' : ''}`}>
       <div
         className={`${s.custom} dropdown-trigger`}
         onClick={() => setControlActive(!isActive)}
