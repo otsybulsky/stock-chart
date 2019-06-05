@@ -28,12 +28,12 @@ import { OHLCTooltip } from 'react-stockcharts/lib/tooltip'
 
 const cx = classNames.bind(s)
 
+const setCandleColor = d => (d.close > d.open ? 'green' : 'red')
+
 const candlesAppearance = {
-  wickStroke: '#000000',
-  fill: function fill(d) {
-    return d.close > d.open ? 'green' : 'red'
-  },
-  stroke: '#000000',
+  wickStroke: setCandleColor,
+  fill: setCandleColor,
+  stroke: setCandleColor,
   candleStrokeWidth: 1,
   widthRatio: 0.8,
   opacity: 1
