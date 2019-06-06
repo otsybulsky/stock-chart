@@ -1,7 +1,7 @@
 import { roundNumber } from 'shared/utils'
 
-export const fetchData = symbol => {
-  const apiUrl = `http://localhost:4000/api/data-m1?sym=${symbol}`
+export const fetchData = (symbol, interval = '1m') => {
+  const apiUrl = `http://localhost:4000/api/data?sym=${symbol}&interval=${interval}`
 
   return fetch(apiUrl).then(apiData => apiData.json())
 }
