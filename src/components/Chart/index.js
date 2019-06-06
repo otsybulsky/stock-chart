@@ -9,6 +9,7 @@ import GetSymbol from './GetSymbol'
 import TopBar from './TopBar'
 import { getData } from 'api'
 import { StoreContext } from 'shared/context'
+import { intervalType } from 'shared/types'
 
 const cx = classNames.bind(s)
 
@@ -96,10 +97,14 @@ const ChartComponent = ({ containerId, ...props }) => {
   }
 
   useEffect(() => {
-    const { symbol } = getContainerConfig(containerId)
-    setSymbolState({
-      ...symbolState,
-      symbol
+    const { symbol, interval } = getContainerConfig(containerId)
+    setConfig(config => {
+      setSymbolState(state => ({ ...state, symbol }))
+
+      return {
+        ...config,
+        interval: interval || intervalType.m1
+      }
     })
   }, [])
 
@@ -122,23 +127,25 @@ const ChartComponent = ({ containerId, ...props }) => {
   }, [config])
 
   useEffect(() => {
-    if (symbolState.symbol) {
+    if (symbolState.symbol && config.interval) {
       setLoading(true)
-      getData(symbolState.symbol).then(({ error, chart }) => {
-        if (!error) {
-          updateChart(chart)
-        } else {
-          console.log('--', symbolState.symbol, error)
-          setSymbolState({
-            ...symbolState,
-            symbol: previousSymbol,
-            manualEdit: false
-          })
+      getData({ symbol: symbolState.symbol, interval: config.interval }).then(
+        ({ error, chart }) => {
+          if (!error) {
+            updateChart(chart)
+          } else {
+            console.log('--', symbolState.symbol, error)
+            setSymbolState({
+              ...symbolState,
+              symbol: previousSymbol,
+              manualEdit: false
+            })
+          }
+          setLoading(false)
         }
-        setLoading(false)
-      })
+      )
     }
-  }, [symbolState.symbol])
+  }, [symbolState.symbol, config.interval])
 
   const handleKeyDown = e => {
     const letters = /Key[A-Za-z]/
@@ -179,7 +186,8 @@ const ChartComponent = ({ containerId, ...props }) => {
     const { symbol } = symbolState
     let currentConfig = {
       containerId,
-      symbol: symbolState.symbol
+      symbol: symbolState.symbol,
+      interval: config.interval
     }
 
     if (config.xExtents && config.xExtents.length === 2) {
@@ -218,6 +226,9 @@ const ChartComponent = ({ containerId, ...props }) => {
     })
   }
 
+  const onSetInterval = interval =>
+    setConfig(config => ({ ...config, interval }))
+
   const { width, height } = props
 
   if (!(width > 0 && height > 0)) {
@@ -247,9 +258,11 @@ const ChartComponent = ({ containerId, ...props }) => {
           </Modal>
           <TopBar
             symbol={symbolState.symbol}
+            interval={config.interval}
             loading={loading}
             lastVisibleCandle={lastVisibleCandle}
             onTickerClick={onTickerClick}
+            onSetInterval={onSetInterval}
           />
           {!loading && config.data && props.height && (
             <Chart
