@@ -22,12 +22,9 @@ const usePrevious = value => {
 }
 
 const ChartComponent = ({ containerId, ...props }) => {
-  const {
-    containerStore,
-    getContainerConfig,
-    setContainerConfig,
-    setGroupSymbol
-  } = useContext(StoreContext)
+  const { getContainerConfig, setContainerConfig, setGroupSymbol } = useContext(
+    StoreContext
+  )
 
   const [symbolState, setSymbolState] = useState({
     modalState: false,
@@ -183,7 +180,6 @@ const ChartComponent = ({ containerId, ...props }) => {
   }
 
   const saveConfig = config => {
-    const { symbol } = symbolState
     let currentConfig = {
       containerId,
       symbol: symbolState.symbol,

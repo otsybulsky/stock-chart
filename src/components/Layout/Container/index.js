@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import s from './Container.m.scss'
 import classNames from 'classnames/bind'
 import { StoreContext } from 'shared/context'
@@ -20,20 +20,19 @@ const Container = ({ containerId, width, height }) => {
   } = useContext(StoreContext)
 
   const onClose = id => {
-    removeItemFromLayout(id)
-    // confirmAlert({
-    //   title: 'Confirm to close',
-    //   message: 'Are you sure to do this?',
-    //   buttons: [
-    //     {
-    //       label: 'Yes',
-    //       onClick: () => removeItemFromLayout(id)
-    //     },
-    //     {
-    //       label: 'Cancel'
-    //     }
-    //   ]
-    // })
+    confirmAlert({
+      title: 'Confirm to close',
+      message: 'Are you sure to do this?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => removeItemFromLayout(id)
+        },
+        {
+          label: 'Cancel'
+        }
+      ]
+    })
   }
 
   const onGroupChange = groupId => setContainerGroup(containerId, groupId)
