@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import classNames from 'classnames/bind'
 import Chart from './Chart'
 import s from './Chart.m.scss'
@@ -8,6 +8,8 @@ import Modal from '../Modal'
 import GetSymbol from './GetSymbol'
 import TopBar from './TopBar'
 import { getData } from 'api'
+import { StoreContext } from 'shared/context'
+import { intervalType } from 'shared/types'
 
 const cx = classNames.bind(s)
 
@@ -19,15 +21,36 @@ const usePrevious = value => {
   return ref.current
 }
 
-const ChartComponent = props => {
+const ChartComponent = ({ containerId, ...props }) => {
+  const {
+    containerStore,
+    getContainerConfig,
+    setContainerConfig,
+    setGroupSymbol
+  } = useContext(StoreContext)
+
   const [symbolState, setSymbolState] = useState({
     modalState: false,
-    symbol: ''
+    symbol: '',
+    manualEdit: false
   })
   const previousSymbol = usePrevious(symbolState.symbol)
   const [loading, setLoading] = useState(false)
   const [config, setConfig] = useState({})
   const [lastVisibleCandle, setLastVisibleCandle] = useState(null)
+
+  const { groupId, symbol: containerSymbol } = getContainerConfig(containerId)
+
+  if (
+    groupId &&
+    containerSymbol !== symbolState.symbol &&
+    !symbolState.manualEdit
+  ) {
+    setSymbolState({
+      ...symbolState,
+      symbol: containerSymbol
+    })
+  }
 
   const updateChart = apiData => {
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
@@ -36,24 +59,52 @@ const ChartComponent = props => {
     const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
       apiData
     )
+
+    const { xVisibleCount } = getContainerConfig(containerId)
+
     const xExtents = [
-      xAccessor(last(data)),
-      xAccessor(data[data.length - Math.min(data.length, 400)])
+      xAccessor(
+        data[data.length - Math.min(data.length, xVisibleCount || 400)]
+      ),
+      xAccessor(last(data))
     ]
-    setConfig({
-      chartActive: true,
-      data,
-      xScale,
-      xAccessor,
-      displayXAccessor,
-      xExtents
+
+    setConfig(config => {
+      let chartActive = false
+      if (symbolState.manualEdit) {
+        chartActive = true
+        setSymbolState(state => {
+          setGroupSymbol(containerId, state.symbol)
+          return {
+            ...state,
+            manualEdit: false
+          }
+        })
+      }
+      const newConfig = {
+        ...config,
+        chartActive,
+        data,
+        xScale,
+        xAccessor,
+        displayXAccessor,
+        xExtents
+      }
+      saveConfig(newConfig)
+
+      return newConfig
     })
   }
 
   useEffect(() => {
-    setSymbolState({
-      ...symbolState,
-      symbol: 'SPY'
+    const { symbol, interval } = getContainerConfig(containerId)
+    setConfig(config => {
+      setSymbolState(state => ({ ...state, symbol }))
+
+      return {
+        ...config,
+        interval: interval || intervalType.m1
+      }
     })
   }, [])
 
@@ -76,22 +127,25 @@ const ChartComponent = props => {
   }, [config])
 
   useEffect(() => {
-    if (symbolState.symbol) {
+    if (symbolState.symbol && config.interval) {
       setLoading(true)
-      getData(symbolState.symbol).then(({ error, chart }) => {
-        if (!error) {
-          updateChart(chart)
-        } else {
-          console.log('--', symbolState.symbol, error)
-          setSymbolState({
-            ...symbolState,
-            symbol: previousSymbol
-          })
+      getData({ symbol: symbolState.symbol, interval: config.interval }).then(
+        ({ error, chart }) => {
+          if (!error) {
+            updateChart(chart)
+          } else {
+            console.log('--', symbolState.symbol, error)
+            setSymbolState({
+              ...symbolState,
+              symbol: previousSymbol,
+              manualEdit: false
+            })
+          }
+          setLoading(false)
         }
-        setLoading(false)
-      })
+      )
     }
-  }, [symbolState.symbol])
+  }, [symbolState.symbol, config.interval])
 
   const handleKeyDown = e => {
     const letters = /Key[A-Za-z]/
@@ -99,7 +153,8 @@ const ChartComponent = props => {
     if (e.code.match(letters)) {
       setSymbolState({
         ...symbolState,
-        modalState: true
+        modalState: true,
+        manualEdit: true
       })
     }
 
@@ -120,11 +175,29 @@ const ChartComponent = props => {
   }
 
   const updateConfig = params => {
-    setConfig({ ...config, ...params })
+    setConfig(config => {
+      const newConfig = { ...config, ...params }
+      saveConfig(config)
+      return newConfig
+    })
   }
 
-  if (!config.data) {
-    return <div>Loading...</div>
+  const saveConfig = config => {
+    const { symbol } = symbolState
+    let currentConfig = {
+      containerId,
+      symbol: symbolState.symbol,
+      interval: config.interval
+    }
+
+    if (config.xExtents && config.xExtents.length === 2) {
+      currentConfig = {
+        ...currentConfig,
+        xVisibleCount: ~~config.xExtents[1] - ~~config.xExtents[0] + 1
+      }
+    }
+
+    setContainerConfig(currentConfig)
   }
 
   function changeScroll() {
@@ -142,7 +215,7 @@ const ChartComponent = props => {
         modalState: false
       })
     } else {
-      setSymbolState({ ...symbolState, modalState: false })
+      setSymbolState({ ...symbolState, modalState: false, manualEdit: false })
     }
   }
 
@@ -153,8 +226,10 @@ const ChartComponent = props => {
     })
   }
 
-  const width = parseInt(props.width)
-  const height = parseInt(props.height)
+  const onSetInterval = interval =>
+    setConfig(config => ({ ...config, interval }))
+
+  const { width, height } = props
 
   if (!(width > 0 && height > 0)) {
     return null
@@ -166,27 +241,39 @@ const ChartComponent = props => {
       onMouseLeave={changeScroll}
       className={cx('container')}
     >
-      <Modal
-        noBackground
-        modalState={symbolState.modalState}
-        closeModal={closeModal}
-      >
-        <GetSymbol closeModal={closeModal} />
-      </Modal>
-      <TopBar
-        symbol={symbolState.symbol}
-        loading={loading}
-        lastVisibleCandle={lastVisibleCandle}
-        onTickerClick={onTickerClick}
-      />
-      {!loading && config.data && props.height && (
-        <Chart
-          className={cx('chart')}
-          config={config}
-          updateConfig={updateConfig}
-          height={height - 40 - 10}
-          width={width - 10}
-        />
+      {!config.data ? (
+        <>
+          <div>Loading...</div>
+          <span>{containerId}</span>
+          <span>{symbolState.symbol}</span>
+        </>
+      ) : (
+        <>
+          <Modal
+            noBackground
+            modalState={symbolState.modalState}
+            closeModal={closeModal}
+          >
+            <GetSymbol closeModal={closeModal} />
+          </Modal>
+          <TopBar
+            symbol={symbolState.symbol}
+            interval={config.interval}
+            loading={loading}
+            lastVisibleCandle={lastVisibleCandle}
+            onTickerClick={onTickerClick}
+            onSetInterval={onSetInterval}
+          />
+          {!loading && config.data && props.height && (
+            <Chart
+              className={cx('chart')}
+              config={config}
+              updateConfig={updateConfig}
+              height={height - 40 - 10}
+              width={width - 10}
+            />
+          )}
+        </>
       )}
     </div>
   )

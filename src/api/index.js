@@ -1,16 +1,17 @@
 import { roundNumber } from 'shared/utils'
 
-export const fetchData = symbol => {
-  const apiUrl = `http://localhost:4000/api/data-m1?sym=${symbol}`
+export const fetchData = ({ symbol, interval }) => {
+  // console.log('-', symbol, interval)
+  const apiUrl = `http://localhost:4000/api/data?sym=${symbol}&interval=${interval}`
 
   return fetch(apiUrl).then(apiData => apiData.json())
 }
 
 const currentDateOffset = new Date().getTimezoneOffset() * 60 * 1000
 
-export const getData = symbol =>
+export const getData = props =>
   new Promise(resolve => {
-    fetchData(symbol).then(apiData => {
+    fetchData(props).then(apiData => {
       const {
         chart: { result, error }
       } = apiData

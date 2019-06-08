@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  align-items: center;
+
+  .period {
+    cursor: pointer;
+    width: 2rem;
+    margin-right: 0.5rem;
+
+    &:hover {
+      font-weight: 700;
+      font-size: 120%;
+    }
+
+    &.current {
+      font-weight: 700;
+      color: blue;
+    }
+  }
+}

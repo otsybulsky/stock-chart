@@ -1,8 +1,6 @@
 .container {
   height: 100%;
   width: 100%;
-  border: 1px solid gray;
-
   display: flex;
   flex-direction: column
 }
@@ -15,6 +13,22 @@
   padding-right: 0.5rem;
   height: 2.5rem;
   border-bottom: 1px solid gray;
+
+  .leftPart {
+    display: flex;
+    align-items: center;
+
+    .ticker {
+      cursor: pointer;
+      margin-right: 1rem;
+      padding-right: 0.5rem;
+
+
+      &:hover {
+        background-color: lightgrey;
+      }
+    }
+  }
 }
 
 .chart {
