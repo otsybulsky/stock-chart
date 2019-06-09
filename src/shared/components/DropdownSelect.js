@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
 import s from './DropdownSelect.m.scss'
-import { string } from 'postcss-selector-parser'
 
 const DropdownSelect = ({ items, value, onChange }) => {
   const node = useRef()

@@ -1,6 +1,6 @@
 export const containerType = {
-  Chart: 'chart',
-  WatchList: 'watch list'
+  Chart: { id: 'chart', name: 'Chart' },
+  WatchList: { id: 'watchlist', name: 'Watch List' }
 }
 
 export const intervalType = {

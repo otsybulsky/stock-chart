@@ -100,7 +100,7 @@ const StoreProvider = ({ windowSize, children }) => {
   const initContainerStore = containerId => {
     return {
       containerId,
-      type: containerType.Chart,
+      typeId: containerType.Chart.id,
       symbol: 'SPY',
       groupId: null
     }
@@ -209,7 +209,8 @@ const StoreProvider = ({ windowSize, children }) => {
         let symbol = containerConfig.symbol
 
         const groupedContainers = Object.values(containerStore).filter(
-          item => item.type === containerType.Chart && item.groupId === groupId
+          item =>
+            item.typeId === containerType.Chart.id && item.groupId === groupId
         )
 
         if (groupedContainers.length) {
@@ -263,7 +264,7 @@ const StoreProvider = ({ windowSize, children }) => {
           const config = containerStore[cId]
           if (config.groupId === groupId) {
             if (
-              config.type === containerType.Chart &&
+              config.typeId === containerType.Chart.id &&
               config.symbol !== symbol
             ) {
               config.symbol = symbol
@@ -283,6 +284,23 @@ const StoreProvider = ({ windowSize, children }) => {
     }
   }
 
+  const setContainerType = (containerId, typeId) => {
+    setState(state => {
+      const containerConfig = {
+        ...state.containerStore[containerId],
+        typeId
+      }
+
+      return {
+        ...state,
+        containerStore: {
+          ...state.containerStore,
+          [containerId]: containerConfig
+        }
+      }
+    })
+  }
+
   return (
     <StoreContext.Provider
       value={{
@@ -299,6 +317,7 @@ const StoreProvider = ({ windowSize, children }) => {
         setContainerConfig,
         getGroups,
         setContainerGroup,
+        setContainerType,
         setGroupSymbol
       }}
     >
