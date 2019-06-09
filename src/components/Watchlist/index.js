@@ -7,29 +7,6 @@ import { StoreContext } from 'shared/context'
 
 const cx = classNames.bind(s)
 
-const data = [
-  {
-    symbol: 'SPY',
-    time: new Date(Date.now()).toLocaleTimeString()
-  },
-  {
-    symbol: 'SPY',
-    time: new Date(Date.now()).toLocaleTimeString()
-  },
-  {
-    symbol: 'AAL',
-    time: new Date(Date.now()).toLocaleTimeString()
-  },
-  {
-    symbol: 'CTRV',
-    time: new Date(Date.now()).toLocaleTimeString()
-  },
-  {
-    symbol: 'RWLK',
-    time: new Date(Date.now()).toLocaleTimeString()
-  }
-]
-
 const columns = [
   {
     Header: '',
@@ -74,6 +51,43 @@ const Watchlist = ({ containerId, width, height }) => {
 
   const [state, setState] = useState({ expanded: {} })
   const [symbol, setSymbol] = useState(null)
+  const [data, setData] = useState([
+    {
+      symbol: 'SPY',
+      time: new Date(Date.now()).toLocaleTimeString()
+    },
+    {
+      symbol: 'SPY',
+      time: new Date(Date.now()).toLocaleTimeString()
+    },
+    {
+      symbol: 'AAL',
+      time: new Date(Date.now()).toLocaleTimeString()
+    },
+    {
+      symbol: 'CTRV',
+      time: new Date(Date.now()).toLocaleTimeString()
+    },
+    {
+      symbol: 'RWLK',
+      time: new Date(Date.now()).toLocaleTimeString()
+    }
+  ])
+
+  useEffect(() => {
+    setTimeout(function fixture() {
+      const symbols = ['SPY', 'AAL', 'CTRV', 'RWLK', 'WDC', 'DAL']
+      const symbol = symbols[~~(symbols.length * Math.random())]
+      setData(data => [
+        ...data,
+        {
+          symbol,
+          time: new Date(Date.now()).toLocaleTimeString()
+        }
+      ])
+      setTimeout(fixture, 1000)
+    }, 1000)
+  }, [])
 
   useEffect(() => {
     if (symbol) {

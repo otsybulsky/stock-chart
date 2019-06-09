@@ -60,7 +60,6 @@ const DropdownSelect = ({ items, value, onChange }) => {
         <div className="dropdown-content">
           {items.map(item => (
             <a
-              href="#undefined"
               key={item.id}
               className={`dropdown-item ${
                 item.id === value ? 'is-active' : ''
