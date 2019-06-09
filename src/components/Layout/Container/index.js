@@ -5,8 +5,10 @@ import { StoreContext } from 'shared/context'
 import { confirmAlert } from 'react-confirm-alert'
 import Chart from 'components/Chart'
 import DropdownSelect from 'shared/components/DropdownSelect'
+import { containerType } from 'shared/types'
 
 const cx = classNames.bind(s)
+const containerTypes = Object.values(containerType)
 
 const Container = ({ containerId, width, height }) => {
   const {
@@ -16,6 +18,7 @@ const Container = ({ containerId, width, height }) => {
     onRestoreLayout,
     getGroups,
     setContainerGroup,
+    setContainerType,
     containerStore
   } = useContext(StoreContext)
 
@@ -35,7 +38,21 @@ const Container = ({ containerId, width, height }) => {
     })
   }
 
+  const showContent = () => {
+    switch (containerStore[containerId].typeId) {
+      case containerType.Chart.id:
+        return <Chart {...{ containerId, width, height: height - 20 }} />
+
+      case containerType.WatchList.id:
+        return null
+
+      default:
+        return null
+    }
+  }
+
   const onGroupChange = groupId => setContainerGroup(containerId, groupId)
+  const onTypeChange = typeId => setContainerType(containerId, typeId)
 
   const groups = getGroups()
 
@@ -43,6 +60,11 @@ const Container = ({ containerId, width, height }) => {
     <div className={cx('container')}>
       <div className={s.navbar}>
         <div className={s.leftPart}>
+          <DropdownSelect
+            value={containerStore[containerId].typeId}
+            items={containerTypes}
+            onChange={onTypeChange}
+          />
           <DropdownSelect
             value={containerStore[containerId].groupId}
             items={groups}
@@ -82,9 +104,7 @@ const Container = ({ containerId, width, height }) => {
         </div>
       </div>
 
-      <div className={s.content}>
-        <Chart {...{ containerId, width, height: height - 20 }} />
-      </div>
+      <div className={s.content}>{showContent()}</div>
     </div>
   )
 }
