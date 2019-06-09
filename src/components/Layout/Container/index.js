@@ -105,7 +105,12 @@ const Container = ({ containerId, width, height }) => {
         </div>
       </div>
 
-      <div className={s.content}>{showContent()}</div>
+      {/* drag container only if muse down on navbar
+      https://github.com/STRML/react-grid-layout/issues/293#issuecomment-234876170
+      */}
+      <div onMouseDown={e => e.stopPropagation()} className={s.content}>
+        {showContent()}
+      </div>
     </div>
   )
 }
