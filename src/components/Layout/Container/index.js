@@ -45,7 +45,7 @@ const Container = ({ containerId, width, height }) => {
         return <Chart {...{ containerId, width, height: height - 20 }} />
 
       case containerType.WatchList.id:
-        return <Watchlist {...{ containerId }} />
+        return <Watchlist {...{ containerId, width, height }} />
 
       default:
         return null
