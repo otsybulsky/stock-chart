@@ -4,6 +4,7 @@ import classNames from 'classnames/bind'
 import { StoreContext } from 'shared/context'
 import { confirmAlert } from 'react-confirm-alert'
 import Chart from 'components/Chart'
+import Watchlist from 'components/Watchlist'
 import DropdownSelect from 'shared/components/DropdownSelect'
 import { containerType } from 'shared/types'
 
@@ -44,7 +45,7 @@ const Container = ({ containerId, width, height }) => {
         return <Chart {...{ containerId, width, height: height - 20 }} />
 
       case containerType.WatchList.id:
-        return null
+        return <Watchlist {...{ containerId }} />
 
       default:
         return null
