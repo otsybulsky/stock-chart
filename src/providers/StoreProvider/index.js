@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { StoreContext } from 'shared/context'
-import { saveStateToStorage, loadStateFromStorage } from './utils'
+import {
+  saveStateToStorage,
+  loadStateFromStorage,
+  fixtureGenerator
+} from './utils'
 import uuid from 'uuid/v4'
 import { containerType } from 'shared/types'
 import debounce from 'debounce'
@@ -32,6 +36,8 @@ const StoreProvider = ({ windowSize, children }) => {
 
   const [isStart, setIsStart] = useState(true)
   const cols = 12
+
+  const [fixtureScanData, setFixtureScanData] = useState([])
 
   const onFullscreenContainer = containerId => {
     setState(state => ({
@@ -128,6 +134,7 @@ const StoreProvider = ({ windowSize, children }) => {
   }
 
   useEffect(() => {
+    fixtureGenerator(fixtureScanData, setFixtureScanData)
     const restored = loadStateFromStorage()
     if (restored && restored.config) {
       setState(state => ({ ...state, ...restored.config.state }))
@@ -318,7 +325,8 @@ const StoreProvider = ({ windowSize, children }) => {
         getGroups,
         setContainerGroup,
         setContainerType,
-        setGroupSymbol
+        setGroupSymbol,
+        fixtureScanData
       }}
     >
       {children}
