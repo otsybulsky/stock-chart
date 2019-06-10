@@ -218,7 +218,8 @@ const ChartComponent = ({ containerId, ...props }) => {
   const onTickerClick = () => {
     setSymbolState({
       ...symbolState,
-      modalState: true
+      modalState: true,
+      manualEdit: true
     })
   }
 
