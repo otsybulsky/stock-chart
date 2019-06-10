@@ -25,7 +25,7 @@ const TopBar = ({
         )}
       </div>
 
-      {!loading && <CandleInfo candle={lastVisibleCandle} />}
+      {/* {!loading && <CandleInfo candle={lastVisibleCandle} />} */}
     </div>
   )
 }

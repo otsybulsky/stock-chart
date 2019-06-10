@@ -12,6 +12,7 @@ const IntervalBar = ({ interval, onSetInterval }) => {
         const current = intervalType[key] === interval ? true : null
         return (
           <div
+            key={key}
             className={cx('period', { current })}
             onClick={() => onSetInterval(intervalType[key])}
           >

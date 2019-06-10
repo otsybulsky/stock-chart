@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { StoreContext } from 'shared/context'
-import { saveStateToStorage, loadStateFromStorage } from './utils'
+import {
+  saveStateToStorage,
+  loadStateFromStorage,
+  fixtureGenerator
+} from './utils'
 import uuid from 'uuid/v4'
 import { containerType } from 'shared/types'
 import debounce from 'debounce'
+import defaultSpace from './defaultSpace'
 
-const defaultLayout = [
-  { i: uuid(), x: 0, y: 0, w: 8, h: 4 },
-  { i: uuid(), x: 0, y: 4, w: 8, h: 4 }
-]
+const defaultLayout = [{ i: uuid(), x: 0, y: 0, w: 8, h: 4 }]
 
 const ungroupId = '0'
 
@@ -32,6 +34,8 @@ const StoreProvider = ({ windowSize, children }) => {
 
   const [isStart, setIsStart] = useState(true)
   const cols = 12
+
+  const [fixtureScanData, setFixtureScanData] = useState([])
 
   const onFullscreenContainer = containerId => {
     setState(state => ({
@@ -128,24 +132,26 @@ const StoreProvider = ({ windowSize, children }) => {
   }
 
   useEffect(() => {
+    fixtureGenerator(fixtureScanData, setFixtureScanData)
     const restored = loadStateFromStorage()
     if (restored && restored.config) {
       setState(state => ({ ...state, ...restored.config.state }))
     } else {
-      let containerStore = {}
-      defaultLayout.forEach(item => {
-        containerStore = {
-          ...containerStore,
-          [item.i]: initContainerStore(item.i)
-        }
-      })
+      // let containerStore = {}
+      // defaultLayout.forEach(item => {
+      //   containerStore = {
+      //     ...containerStore,
+      //     [item.i]: initContainerStore(item.i)
+      //   }
+      // })
 
-      setState(state => ({
-        ...state,
-        containerStore,
-        layout: defaultLayout,
-        groups
-      }))
+      // setState(state => ({
+      //   ...state,
+      //   containerStore,
+      //   layout: defaultLayout,
+      //   groups
+      // }))
+      setState(state => ({ ...state, ...defaultSpace.config.state }))
     }
     setIsStart(false)
 
@@ -318,7 +324,8 @@ const StoreProvider = ({ windowSize, children }) => {
         getGroups,
         setContainerGroup,
         setContainerType,
-        setGroupSymbol
+        setGroupSymbol,
+        fixtureScanData
       }}
     >
       {children}
