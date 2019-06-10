@@ -12,7 +12,7 @@ export const saveStateToStorage = data => {
 }
 
 export const fixtureGenerator = (data, setData) => {
-  const symbols = ['SPY', 'AAL', 'CTRV', 'RWLK', 'WDC', 'DAL']
+  const symbols = ['SPY', 'AAL', 'ALK', 'DAL', 'UAL', 'JBLU', 'SAVE']
   const intervals = [100, 500, 1500]
 
   setTimeout(function fixture() {

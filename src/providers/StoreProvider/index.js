@@ -8,11 +8,9 @@ import {
 import uuid from 'uuid/v4'
 import { containerType } from 'shared/types'
 import debounce from 'debounce'
+import defaultSpace from './defaultSpace'
 
-const defaultLayout = [
-  { i: uuid(), x: 0, y: 0, w: 8, h: 4 },
-  { i: uuid(), x: 0, y: 4, w: 8, h: 4 }
-]
+const defaultLayout = [{ i: uuid(), x: 0, y: 0, w: 8, h: 4 }]
 
 const ungroupId = '0'
 
@@ -139,20 +137,21 @@ const StoreProvider = ({ windowSize, children }) => {
     if (restored && restored.config) {
       setState(state => ({ ...state, ...restored.config.state }))
     } else {
-      let containerStore = {}
-      defaultLayout.forEach(item => {
-        containerStore = {
-          ...containerStore,
-          [item.i]: initContainerStore(item.i)
-        }
-      })
+      // let containerStore = {}
+      // defaultLayout.forEach(item => {
+      //   containerStore = {
+      //     ...containerStore,
+      //     [item.i]: initContainerStore(item.i)
+      //   }
+      // })
 
-      setState(state => ({
-        ...state,
-        containerStore,
-        layout: defaultLayout,
-        groups
-      }))
+      // setState(state => ({
+      //   ...state,
+      //   containerStore,
+      //   layout: defaultLayout,
+      //   groups
+      // }))
+      setState(state => ({ ...state, ...defaultSpace.config.state }))
     }
     setIsStart(false)
 
