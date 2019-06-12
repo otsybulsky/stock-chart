@@ -2,7 +2,9 @@ import { roundNumber } from 'shared/utils'
 
 export const fetchData = ({ symbol, interval }) => {
   // console.log('-', symbol, interval)
-  const apiUrl = `http://localhost:4000/api/data?sym=${symbol}&interval=${interval}`
+  const apiUrl = `${
+    process.env.REACT_APP_API_URL
+  }/data?sym=${symbol}&interval=${interval}`
 
   return fetch(apiUrl).then(apiData => apiData.json())
 }
