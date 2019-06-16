@@ -1,28 +1,24 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react'
+import 'react-grid-layout/css/styles.css'
+import 'react-resizable/css/styles.css'
+import 'react-confirm-alert/src/react-confirm-alert.css'
+import 'react-table/react-table.css'
+import './App.css'
+import Layout from './components/Layout'
+import StoreProvider from './providers/StoreProvider'
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+const App = ({ size }) => {
+  const [windowSize, setSize] = useState(null)
+
+  useEffect(() => {
+    setSize({ width: window.innerWidth, height: window.innerHeight })
+  }, [])
+
+  return (
+    <StoreProvider windowSize={windowSize}>
+      {windowSize && <Layout size={windowSize} />}
+    </StoreProvider>
+  )
 }
 
-export default App;
+export default App
