@@ -132,10 +132,12 @@ const ChartComponent = ({ containerId, ...props }) => {
             updateChart(chart)
           } else {
             console.log('--', symbolState.symbol, error)
-            setSymbolState({
-              ...symbolState,
-              symbol: previousSymbol,
-              manualEdit: false
+
+            setSymbolState(state => {
+              return {
+                ...state,
+                symbol: previousSymbol
+              }
             })
           }
           setLoading(false)

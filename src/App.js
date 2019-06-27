@@ -11,7 +11,7 @@ const App = ({ size }) => {
   const [windowSize, setSize] = useState(null)
 
   useEffect(() => {
-    setSize({ width: window.innerWidth, height: window.innerHeight })
+    setSize({ width: window.innerWidth - 16, height: window.innerHeight })
   }, [])
 
   return (
