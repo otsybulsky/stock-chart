@@ -52,7 +52,7 @@
     "react": "^16.8.6",
     "react-app-polyfill": "^0.2.2",
     "react-confirm-alert": "^2.4.1",
-    "react-dev-utils": "^8.0.0",
+    "react-dev-utils": "^11.0.4",
     "react-dom": "^16.8.6",
     "react-grid-layout": "^0.16.6",
     "react-stockcharts": "^0.7.8",
